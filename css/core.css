@@ -1,0 +1,38 @@
+/* __IMPORT */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');
+
+/* __GENERAL */
+
+*{font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;}
+*:focus{outline: none;}
+h1{font-weight: 700; margin: 3rem 0; text-align: center;}
+h1 span{color: #9F9F9F;}
+
+/* __FORM */
+
+.lis-con{display: grid;}
+.lis{background: #EFEFEF; border: none;}
+
+.for_but{border: 2px solid #EFEFEF; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25); border-radius: 20px; display: block; font-size: 15px; margin: 0 auto; padding: 8px 32px;}
+.for_but:hover{box-shadow: 0 0 0 #FFF;}
+
+
+/* Results */
+.rsc{border-top: 1px solid #EFEFEF; display: none; margin-top: 40px; text-align: left;}
+.rsu{list-style: inside decimal; margin-bottom: 40px;}
+.rsu li{color: #AFAFAF; font-size: 10px;}
+.rsu li a{color: #7F7F7F; font-size: 14px; transition: 0.2s;}
+.rsu li a:hover{color: #2F2F2F;}
+
+/* FOOTER */
+.foo_sec{background-color: #EFEFEF;}
+.foo_con{margin: 0 auto; padding: 40px 40px 70px; text-align: center;}
+.foo_con a{color: #7F7F7F;}
+.foo_con a:hover{color: #AFAFAF;}
+.foo_con p{color: #AFAFAF; font-size: 14px;}
+
+/* ANIMATION */
+@keyframes sldIn{from{opacity: 0; transform: translateY(-30px);}to{opacity: 1; transform: translateY(0px);}}
+
+/* MEDIA */
