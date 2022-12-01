@@ -4,7 +4,7 @@
 
 /* __GENERAL */
 
-*{font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;}
+*{font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif; transition: 0.2s;}
 *:focus{outline: none;}
 h1{font-weight: 700; margin: 3rem 0; text-align: center;}
 h1 span{color: #1497be;}
@@ -12,38 +12,41 @@ h1 span{color: #1497be;}
 /* __MAIN */
 
 /* Lists */
-.lis_sec{padding: 0 2rem;}
-.lis_con{padding-bottom: 2.5rem;}
+.lis_sec{display: flex; justify-content: space-between; margin: 0 auto; max-width: 50rem; padding: 0 2rem; width: 100%;}
+.lis_con{padding-bottom: 2.5rem; max-width: 45%; width: 100%;}
 .lis_con h6{text-align: center;}
-.lis_con textarea{background-color: #efefef; border: none; border-radius: 0.6rem; font-size: 0.85rem; font-weight: 400; margin-top: 1rem; max-height: 8rem; padding: 0.6rem 0.8rem; width: 100%;}
-#following{margin-left: 4rem;}
+.lis_con textarea{background-color: #efefef; border: 2px solid #efefef; border-radius: 0.6rem; font-size: 0.85rem; font-weight: 400; margin-top: 1rem; max-height: 8rem; padding: 0.6rem 0.8rem; width: 100%;}
+.lis_con textarea:focus{background-color: #fff;}
+
+/* Errors */
+#err_tex{display: none; margin-bottom: 2rem;}
 
 /* Submit */
-.sub_but{background-color: #1497be; border: none; border-radius: 10rem; color: #fff; display: block; font-size: 0.9rem; font-weight: 700; margin: 0 auto; padding: 0.6rem 2rem; transition: 0.2s;}
-.sub_but:hover{background: #000;}
+#sub_but{background-color: #1497be; border: none; border-radius: 10rem; color: #fff; display: block; font-size: 0.9rem; font-weight: 700; margin: 0 auto; padding: 0.6rem 2rem;}
+#sub_but:hover{background: #000;}
 
 /* Infos */
 .inf_tex{font-size: 0.8rem; margin: 2.5rem auto 0; max-width: 50rem; padding: 0 2.5rem; text-align: center;}
-.inf_tex a{color: #1497be; transition: 0.2s;}
+.inf_tex a{color: #1497be;}
 .inf_tex a:hover{color: #000;}
 
 /* Results */
-.res_con{margin: 2.5rem auto; max-width: 50rem; padding: 0 2.5rem; text-align: left;}
+.res_con{display: none; margin: 2.5rem auto; max-width: 50rem; padding: 0 2.5rem; text-align: left;}
 .res_con ol{list-style: inside decimal; margin-bottom: 2.5rem;}
-.res_con ol li{color: #AFAFAF; font-size: 0.8rem;}
-.res_con ol li a{color: #7F7F7F; font-size: 2rem; transition: 0.2s;}
-.res_con ol li a:hover{color: #2F2F2F;}
+.res_con ol li{color: #afafaf; font-size: 0.8rem;}
+.res_con ol li a{color: #7f7f7f; font-size: 1rem;}
+.res_con ol li a:hover{color: #000;}
 
 /* Footer */
-.foo_sec{background-color: #EFEFEF;}
+.foo_sec{background-color: #efefef; margin-top: 5rem;}
 .foo_con{margin: 0 auto; padding: 2.5rem 2.5rem 5rem; text-align: center;}
-.foo_con a{color: #7F7F7F;}
-.foo_con a:hover{color: #AFAFAF;}
-.foo_con p{color: #7F7F7F; font-size: 0.85rem;}
+.foo_con a{color: #7f7f7f;}
+.foo_con a:hover{color: #afafaf;}
+.foo_con p{color: #7f7f7f; font-size: 0.85rem;}
 
 /* __MEDIA */
 
-@media screen and (max-width: 680px) {
-.lis_con{max-width: 100%; width: 100%;}
-#following{margin-left: 0;}
+@media screen and (max-width: 580px) {
+.lis_sec{flex-wrap: wrap;}
+.lis_con{max-width: 100%;}
 }
