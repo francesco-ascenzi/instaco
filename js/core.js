@@ -3,79 +3,84 @@
 /* Lists */
 let followers = document.querySelector('#followers');
 let following = document.querySelector('#following');
-let checkButton = document.querySelector('#check-button');
+let subButton = document.querySelector('#sub_but');
 
 /* Errors */
-let errorList = document.querySelector('#error-list');
+let errors = document.querySelector('#err_tex');
 
 /* Results */
-let resultsList = document.querySelector('#results');
-let followersRes = document.querySelector('#followers-list');
-let followingRes = document.querySelector('#following-list');
+let resContainer = document.querySelector('.res_con');
+let resFollowers = document.querySelector('#res_fos');
+let resFollowing = document.querySelector('#res_fog');
 
-/* FUNCTIONS | Check if inputs are empty */
+/* __CLASSES */
+
+/* Check for emptyness and errors */
 class checkClass {
-    constructor(list) {
+    constructor(list, type) {
         this.list = list;
-        this.resList = [];
+        this.type = type;
     }
-    checkDividers() {
-        if (this.list.indexOf(' ') > -1) {
-            this.resList.join(' ');
-        } else if (this.list.indexOf(',') > -1) {
-            this.resList.join(',');
+
+    checkErrors() {
+        if (typeof this.list === 'string') {
+            if (this.list.indexOf(',') > -1) {
+                return this.list.split(',');
+            } else if (this.list.indexOf(' ') > -1) {
+                return this.list.split(' ');
+            } else {
+                errors.innerText = this.type.toUpperCase() + ' list contains invalid dividers, use whitespaces ( ) and commas (,)';
+                eval(this.type).style = 'border: 1px solid #ff0000;';
+                errors.style = 'display: block; color: #ff0000;';
+                return 0;
+            }
         } else {
+            errors.innerText = this.type.toUpperCase() + ' list is empty or invalid';
+            eval(this.type).style = 'border: 1px solid #ff0000;';
+            errors.style = 'display: block; color: #ff0000;';
             return 0;
         }
-        return resList;
     }
 }
 
-/* LISTENER | Form */
-checkButton.addEventListener('click',function() {
+/* __LISTENERS */
+
+/* Form */
+subButton.addEventListener('click', function() {
 
     /* Empty followers and following lists */
-    followersRes.innerHTML = followingRes.innerHTML = '';
+    resFollowers.innerHTML = resFollowing.innerHTML = '';
 
-    /*  */
-    let followersClass = new checkClass(followersList);
-    let followingClass = new checkClass(followingList);
-    followersRes = followersClass.checkDividers();
-    followingRes = followingClass.checkDividers();
+    /* Followers list */
+    let checkFos = new checkClass(followers.value, 'followers');
+    let followersList = checkFos.checkErrors();
 
-    console.log(followersRes);
+    if (typeof followersList === 'number' && followersList == 0) {
+        return;
+    }
 
-    /* Filtering following list for every element if it can't find element that is element equal to element 
-            rsfer=flwingl.filter(e => !flwerl.find(a => e == a));
-            rsfol=flwerl.filter(e => !flwingl.find(a => e == a));
-            rsc.style.display='block';
-            /* Start loops
-            doArr(rsfol,rsin);
-            doArr(rsfer,rser);
-        } else {
-            fme.style='display: block;';
-            fme.innerText='Followers or following list are not compatible. It should be only whitespaces ( ) between followers or following name';
-        };
-    } else {
-        fme.style='display: block;';
-        fme.innerText='Followers or following lists are empty';
-    };
-    */
+    /* Following list */
+    let checkFog = new checkClass(following.value, 'following');
+    let followingList = checkFog.checkErrors();
+
+    if (typeof followingList === 'number' && followingList == 0) {
+        return;
+    }
+
+    /* Show results */
+    errors.style = 'display: none;';
+    resContainer.style = 'display: block;';
+
+    /* Functions to filter for finding equal elements */
+    let findFollowers = followingList.filter(e => !followersList.find(a => e == a));
+    let findFollowing = followersList.filter(e => !followingList.find(a => e == a));
+
+    for (let i = 0; i < findFollowers.length; i++) {
+        resFollowers.innerHTML += '<li><a href="https://www.instagram.com/"' + findFollowers[i] + ' aria-label="Press to visit ' + findFollowers[i] + ' profile">' + findFollowers[i] + '</a></li>';
+    }
+
+    for (let i = 0; i < findFollowing.length; i++) {
+        resFollowing.innerHTML += '<li><a href="https://www.instagram.com/"' + findFollowing[i] + ' aria-label="Press to visit ' + findFollowing[i] + ' profile">' + findFollowing[i] + '</a></li>';
+    }
+
 });
-
-/* Array process 
-function doArr(x,y) {
-    var nChk=50;
-    var i=0;
-    function doBlks() {
-        var chk=nChk;
-        while (chk--&&i<x.length) {
-            y.innerHTML+='<li><a href="https://www.instagram.com/'+x[i]+'" target="_blank" aria-label="'+x[i]+' Instagram profile">'+x[i]+'</a></li>'
-            i++;
-        };
-        if (i<x.length) {
-            setTimeout(doBlks,200);
-        };
-    };
-    doBlks();
-}; */
