@@ -13,6 +13,25 @@ let resContainer = document.querySelector('.res_con');
 let resFollowers = document.querySelector('#res_fos');
 let resFollowing = document.querySelector('#res_fog');
 
+/* __FUNCTIONS */
+
+function iterationList(x, type) {
+    var numChunk = 40;
+    var i = 0;
+
+    function doLoop() {
+        var chunk = numChunk;
+        while (chunk-- && i < x.length) {
+            type.innerHTML += `<li><a href="https://www.instagram.com/${x[i]}" aria-label="Press to visit ${x[i]} profile">${x[i]}</a></li>`;
+            i++;
+        }
+        if (i < x.length) {
+            setTimeout(doLoop, 200);
+        }
+    }
+    doLoop();
+}
+
 /* __CLASSES */
 
 /* Check for emptyness and errors */
@@ -75,12 +94,8 @@ subButton.addEventListener('click', function() {
     let findFollowers = followingList.filter(e => !followersList.find(a => e == a));
     let findFollowing = followersList.filter(e => !followingList.find(a => e == a));
 
-    for (let i = 0; i < findFollowers.length; i++) {
-        resFollowers.innerHTML += '<li><a href="https://www.instagram.com/"' + findFollowers[i] + ' aria-label="Press to visit ' + findFollowers[i] + ' profile">' + findFollowers[i] + '</a></li>';
-    }
-
-    for (let i = 0; i < findFollowing.length; i++) {
-        resFollowing.innerHTML += '<li><a href="https://www.instagram.com/"' + findFollowing[i] + ' aria-label="Press to visit ' + findFollowing[i] + ' profile">' + findFollowing[i] + '</a></li>';
-    }
+    /* Iterate lists */
+    iterationList(findFollowers, resFollowers);
+    iterationList(findFollowing, resFollowing);
 
 });
