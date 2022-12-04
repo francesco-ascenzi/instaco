@@ -1,4 +1,4 @@
-
+```
                 ___          ___      ___          ___          ___          ___     
       ___      /\__\        /\  \    /\  \        /\  \        /\  \        /\  \    
      /\  \    /::|  |      /::\  \   \:\  \      /::\  \      /::\  \      /::\  \   
@@ -10,7 +10,7 @@
   \:\__\       |::/  /    \:\/:/  /\/__/           /:/  /    \:\  \       \:\/:/  /  
    \/__/       /:/  /      \::/  /                /:/  /      \:\__\       \::/  /   
                \/__/        \/__/                 \/__/        \/__/        \/__/    
-
+```
 
 Welcome to the first release of Instaco.
 Instaco is a comparator between Instagram followers and following without API uses, or third parties apps.
