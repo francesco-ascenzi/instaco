@@ -6,6 +6,7 @@
 
 *{font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif; transition: 0.2s;}
 *:focus{outline: none;}
+body{background-color: #fff; font-size: 1rem; line-height: 1.5; -webkit-text-size-adjust: 100%;}
 h1{font-weight: 700; margin: 3rem 0; text-align: center;}
 h1 span{color: #1497be;}
 
@@ -19,7 +20,7 @@ h1 span{color: #1497be;}
 .lis_con textarea:focus{background-color: #fff;}
 
 /* Errors */
-#err_tex{display: none; margin-bottom: 2rem;}
+#err_tex{display: none; font-size: 0.8rem; margin-bottom: 2rem; text-align: center;}
 
 /* Submit */
 #sub_but{background-color: #1497be; border: none; border-radius: 10rem; color: #fff; display: block; font-size: 0.9rem; font-weight: 700; margin: 0 auto; padding: 0.6rem 2rem;}
@@ -34,7 +35,7 @@ h1 span{color: #1497be;}
 .res_con{display: none; margin: 2.5rem auto; max-width: 50rem; padding: 0 2.5rem; text-align: left;}
 .res_con ol{list-style: inside decimal; margin-bottom: 2.5rem;}
 .res_con ol li{color: #afafaf; font-size: 0.8rem;}
-.res_con ol li a{color: #7f7f7f; font-size: 1rem;}
+.res_con ol li a{color: #7f7f7f; font-size: 0.8rem;}
 .res_con ol li a:hover{color: #000;}
 
 /* Footer */
