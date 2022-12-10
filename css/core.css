@@ -4,11 +4,18 @@
 
 /* __GENERAL */
 
-*{font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif; transition: 0.2s;}
+*{box-sizing: border-box; font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif; transition: 0.2s;}
 *:focus{outline: none;}
-body{background-color: #fff; font-size: 1rem; line-height: 1.5; -webkit-text-size-adjust: 100%;}
-h1{font-weight: 700; margin: 3rem 0; text-align: center;}
+body{background-color: #fff; font-size: 1rem; line-height: 1.5; margin: 0; -webkit-text-size-adjust: 100%;}
+button{cursor: pointer;}
+h1, h2, h3, h4, h5, h6{font-weight: 500; line-height: 1.2; margin-bottom: .5rem; margin-top: 0;}
+h1{font-size: calc(1.375rem + 1.5vw); font-weight: 700; margin: 3rem 0; text-align: center;}
 h1 span{color: #1497be;}
+h6{font-size: 1rem;}
+ol{padding-left: 2rem;}
+ol{margin-top: 0; margin-bottom: 1rem;}
+p{margin-bottom: 1rem; margin-top: 0;}
+textarea{resize: vertical;}
 
 /* __MAIN */
 
@@ -16,11 +23,11 @@ h1 span{color: #1497be;}
 .lis_sec{display: flex; justify-content: space-between; margin: 0 auto; max-width: 50rem; padding: 0 2rem; width: 100%;}
 .lis_con{padding-bottom: 2.5rem; max-width: 45%; width: 100%;}
 .lis_con h6{text-align: center;}
-.lis_con textarea{background-color: #efefef; border: 2px solid #efefef; border-radius: 0.6rem; font-size: 0.85rem; font-weight: 400; margin-top: 1rem; max-height: 8rem; padding: 0.6rem 0.8rem; width: 100%;}
+.lis_con textarea{background-color: #efefef; border: 2px solid #efefef; border-radius: 0.6rem; font-size: 0.85rem; font-weight: 400; margin-top: 1rem; max-height: 7rem; padding: 0.6rem 0.8rem; width: 100%;}
 .lis_con textarea:focus{background-color: #fff;}
 
 /* Errors */
-#err_tex{display: none; font-size: 0.8rem; margin-bottom: 2rem; text-align: center;}
+#err_tex{display: none; font-size: 0.8rem; margin-bottom: 2rem; padding: 0 2.5rem; text-align: center;}
 
 /* Submit */
 #sub_but{background-color: #1497be; border: none; border-radius: 10rem; color: #fff; display: block; font-size: 0.9rem; font-weight: 700; margin: 0 auto; padding: 0.6rem 2rem;}
@@ -46,6 +53,10 @@ h1 span{color: #1497be;}
 .foo_con p{color: #7f7f7f; font-size: 0.85rem;}
 
 /* __MEDIA */
+
+@media screen and (min-width: 1200px) {
+h1{font-size: 2.5rem}
+}
 
 @media screen and (max-width: 580px) {
 .lis_sec{flex-wrap: wrap;}
