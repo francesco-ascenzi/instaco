@@ -42,7 +42,7 @@ Contains the actions of followers, such as defollowing and refollowing
 Records the last time the process was initiated
 
 ## Author
-Francesco "Frash" Ascenzi (@frash.dev on IG)
+Francesco "Frash" Ascenzi ([@frash.dev](https://www.instagram.com/frash.dev) on IG)
 
 # License
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
