@@ -1,9 +1,9 @@
-/** INSTACO 1.0
+/** INSTACO
  * 
  * Compare followers/following throught time with the help of Node and MongoDB.
  * 
- * @copyright Commercial license - Please read LICENSE file
  * @author Francesco "Frash" Ascenzi
+ * @license Apache 2.0
  */
 const fs = require('fs');
 
