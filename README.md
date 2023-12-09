@@ -1,5 +1,5 @@
 # Instaco 1.0
-Compare followers/followings and track them over time with Node and MongoDB
+Compare Instagram followers/followings and track them over time with Node and MongoDB
 
 ### Summary
 - [Introduction](#introduction)
