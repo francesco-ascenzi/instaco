@@ -26,7 +26,7 @@ It generates:
 - A ```plain_list_[yyyymmdd].txt``` file inside the ```./data/lists``` folder, containing users who are presently not following you
 
 ## Collection structure
-This application will establish a database named "Instagram," encompassing a collection named "followers."  
+This application will establish a database named "Instagram", encompassing a collection named "followers".  
 The primary structure of "followers" includes:
 ### - Name {String}
 Contains the follower's name
