@@ -1,0 +1,12 @@
+{
+  "connection": {
+    "string": "mongodb://127.0.0.1:27018/",
+    "db": "instagram",
+    "collection": "track"
+  },
+  "files": {
+    "batchSize": 10000,
+    "inputFiles": "data",
+    "outputList": "data/list"
+  }
+}
