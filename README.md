@@ -26,7 +26,7 @@ This application creates a database named "Instagram" with a collection called "
 **- user:** string - The user's name  
 **- followIt:** boolean - True if you follow the user  
 **- followsMe:** boolean - True if the user follows you, false if they have unfollowed you  
-**- followsMeBefore:** boolean - True if the user has already followed you in the past
+**- followsMeBefore:** boolean - True if the user has already followed you in the past  
 **- updated:** date - The last time the process was initiated  
 **- timestamp:** date - Timestamps from the followers/followings lists  
 
