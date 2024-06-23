@@ -24,10 +24,10 @@ const stdSettings = `{
   "connection": {
     "string": "mongodb://127.0.0.1:27018/",
     "db": "instagram",
-    "collection": "track"
+    "collection": "trackFollowers"
   },
   "files": {
-    "batchSize": 10000
+    "batchSize": 5000
     "inputFiles": "data",
     "outputList": "data/list"
   }

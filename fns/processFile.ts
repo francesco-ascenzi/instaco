@@ -70,12 +70,12 @@ function checkJSON(data: string): true | Error {
  * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
  * @license Apache 2.0
  */
-export default async function processFile(connection: mongo.MongoClient, filePath: string, batchSize: number): Promise<true | Error> {
+export default async function processFile(connection: mongo.MongoClient, dbName: string, filePath: string, batchSize: number): Promise<true | Error> {
 
   // Initialize function's constants and variables
   let firstChunk = true;
   let followings = false;
-  let collection: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, 'followers');
+  let collection: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, dbName, 'followers');
   if (collection instanceof Error) return new Error(String(collection));
 
   // Create a read stream and process file's data
@@ -90,7 +90,7 @@ export default async function processFile(connection: mongo.MongoClient, filePat
       if (firstChunk) {
         if (buffer.indexOf('relationships_following') >= 0) {
           followings = true;
-          collection = await getCollection(connection, 'followings');
+          collection = await getCollection(connection, dbName, 'followings');
           if (collection instanceof Error) {
             return new Error(String(collection));
           }

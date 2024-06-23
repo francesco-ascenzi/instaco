@@ -127,13 +127,12 @@ async function updateCollection(
 export default async function generateDiffLists(
   connection: mongo.MongoClient, 
   collection: mongo.Collection<mongo.BSON.Document>, 
-  settings: settingsInterface,
-  rootPath: string
+  settings: settingsInterface
 ): Promise<true | Error> {
 
   // Get both collections
-  const followers: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, 'followers');
-  const followings: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, 'followings');
+  const followers: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followers');
+  const followings: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followings');
 
   if (followers instanceof Error) {
     return new Error(String(followers));

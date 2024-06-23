@@ -77,7 +77,7 @@ interface settingsInterface {
 
   console.info(`> Connection to MongoDB established \x1b[30m(${settings.connection.string})\x1b[0m`);
   
-  const collection: mongodb.Collection<mongodb.BSON.Document> | Error = await getCollection(connection, settings.connection.collection);
+  const collection: mongodb.Collection<mongodb.BSON.Document> | Error = await getCollection(connection, settings.connection.db, settings.connection.collection);
   if (collection instanceof Error) {
     console.error(errorLine, collection);
     return 1;
@@ -134,8 +134,8 @@ interface settingsInterface {
   console.time('> Completed in'); // Initialize timer
 
   // Clean 'followers'/'followings' collections
-  const followers = await getCollection(connection, 'followers');
-  const followings = await getCollection(connection, 'followings');
+  const followers = await getCollection(connection, settings.connection.db, 'followers');
+  const followings = await getCollection(connection, settings.connection.db, 'followings');
 
   if (followers instanceof Error || followings instanceof Error) {
     console.error(`General error retrieving 'followers' or 'followings' collection`);
@@ -149,7 +149,7 @@ interface settingsInterface {
   for (let i = 0; i < 2; i++) {
     const filePath: string = path.join(settings.files.inputFiles, jsonFiles[i]);
 
-    const processFileResponse: true | Error = await processFile(connection, filePath, settings.files.batchSize);
+    const processFileResponse: true | Error = await processFile(connection, settings.connection.db, filePath, settings.files.batchSize);
     if (processFileResponse instanceof Error) {
       console.error(errorLine, processFileResponse);
       return 1;
@@ -159,7 +159,7 @@ interface settingsInterface {
   }
 
   // Generate .txt diff files
-  const processDiff: true | Error = await generateDiffLists(connection, collection, settings, __root);
+  const processDiff: true | Error = await generateDiffLists(connection, collection, settings);
   if (processDiff instanceof Error) {
     console.error(errorLine, processDiff);
     return 1;
