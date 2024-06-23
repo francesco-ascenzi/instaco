@@ -60,6 +60,7 @@ async function updateCollection(
                 update: {
                   $set: {
                     followsMe: true,
+                    timestamp: user.timestamp,
                     updatedAt: new Date()
                   },
                   $setOnInsert: {
@@ -80,6 +81,7 @@ async function updateCollection(
                 update: {
                   $set: {
                     followIt: true,
+                    timestamp: user.timestamp,
                     updatedAt: new Date()
                   },
                   $setOnInsert: {
@@ -176,6 +178,8 @@ export default async function generateDiffLists(
       _id: 0,
       user: 1
     }
+  }).sort({
+    timestamp: -1
   }).toArray();
 
   // Generate a new .txt file

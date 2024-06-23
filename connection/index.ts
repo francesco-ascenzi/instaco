@@ -54,9 +54,13 @@ export async function getCollection(connection: mongodb.MongoClient, dbName: str
   // Create the collection if it doesn't exist
   if (!found) await connection.db(dbName).createCollection(collectionName);
 
-  // Check indexes and create the 'user' index if it doesn't exist
+  // Check indexes and create 'timestamp'/'user' indexes if they don't exist
   if (!await (await connection.db(dbName).collection(collectionName)).indexExists('user')) {
     await (await connection.db(dbName).collection(collectionName)).createIndex({'user': -1});
+  }
+
+  if (!await (await connection.db(dbName).collection(collectionName)).indexExists('timestamp')) {
+    await (await connection.db(dbName).collection(collectionName)).createIndex({'timestamp': -1});
   }
 
   return connection.db(dbName).collection(collectionName);
