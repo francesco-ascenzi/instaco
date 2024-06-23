@@ -5,7 +5,7 @@
     "collection": "track"
   },
   "files": {
-    "batchSize": 10000,
+    "batchSize": 5000,
     "inputFiles": "data",
     "outputList": "data/list"
   }

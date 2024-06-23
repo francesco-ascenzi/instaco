@@ -1,48 +1,39 @@
-# Instaco 1.0
-Compare Instagram followers/followings and track them over time with Node and MongoDB
+# Instaco v2
+A tool to compare Instagram followers/followings and track them over time with Node and MongoDB
 
 ### Summary
-- [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Outputs](#outputs)
 - [Collection structure](#collection-structure)
+- [Funding](#funding)
 - [Author](#author)
 - [License](#license)
 
-## Introduction
-Instaco originated as a swift comparator for followers and followings on Instagram. 
-Over time, requirements have evolved, leading to the development of a comparator capable of persistently storing followers and followings, as well as generating text lists of individuals who have ceased following.
-
 ## Requirements
-To utilize this tool, ensure the following installations:
-- Node.js
-- MongoDB started on port 27018 (port configuration can be adjusted in the index.js file)
-- Your followers and followings JSON files from Instagram, located inside the "data" folder at the project's root
-- A command line interface for executing ```node index.js``` to initiate the process
+To use this tool, you must have:
+- **Node.js** version 18.0.0 or higher.
+- A running **MongoDB** instance (port configuration can be set in settings.json).
+- Your **Instagram followers and followings JSON files**, located in the directory specified in settings.json.
+- A **CLI** to execute node index.js and initiate the process.
 
 ## Outputs
-It generates:
-- Data regarding your followers and individuals who no longer follow you, stored over time in MongoDB
-- A ```plain_list_[yyyymmdd].txt``` file inside the ```./data/lists``` folder, containing users who are presently not following you
+Instaco generates:
+- Data about your followers and users who no longer follow you, stored over time in MongoDB.
+- A ```list_[yyyymmdd].txt``` file in your specified settings directory, containing users who are not currently following you.
 
 ## Collection structure
-This application will establish a database named "Instagram," encompassing a collection named "followers."  
-The primary structure of "followers" includes:
-### - Name {String}
-Contains the follower's name
-### - Follow {Boolean}
-A boolean that returns true if the follower continues to follow you, or false if they have unfollowed you
-### - Timestamp {Date}
-Holds the timestamp retrieved from the followers file to verify if a person has unfollowed and refollowed you
-### - Defollow {Boolean}
-A boolean that returns true if the follower has unfollowed you, or false if they continue to follow you
-### - History {Array}
-Contains the actions of followers, such as defollowing and refollowing
-### - LastRetrieve {Date}
-Records the last time the process was initiated
+This application creates a database named "Instagram" with a collection called "followers". The structure of the "followers" collection includes:  
+**- user:** string - The user's name  
+**- followIt:** boolean - True if you follow the user  
+**- followsMe:** boolean - True if the user follows you, false if they have unfollowed you  
+**- updated:** date - The last time the process was initiated  
+**- timestamp:** date - Timestamps from the followers/followings lists  
+
+## Funding
+If you liked this tool, consider funding it at [@PayPal](https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A) (the link is within package.json too)
 
 ## Author
-Francesco "Frash" Ascenzi ([@frash.dev](https://www.instagram.com/frash.dev) on IG)
+Frash | Francesco Ascenzi ([@fra.ascenzi](https://www.instagram.com/fra.ascenzi) on IG)
 
 # License
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.

@@ -1,7 +1,18 @@
 {
   "name": "instaco",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "author": "Francesco 'Frash' Ascenzi",
+  "funding": "https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A",
+  "homepage": "https://github.com/francesco-ascenzi/instaco",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/francesco-ascenzi/instaco.git"
+  },
+  "bugs": {
+    "url": "https://github.com/francesco-ascenzi/instaco/issues"
+  },
   "main": "./main.js",
+  "license": "Apache-2.0", 
   "scripts": {
     "build": "tsc -p .",
     "start": "node index.js"

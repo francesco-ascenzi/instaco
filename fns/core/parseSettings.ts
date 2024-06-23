@@ -33,25 +33,27 @@ const stdSettings = `{
   }
 }`;
 
-/** Check if object's value is a string (more than 1 character) or an object
+/** Check if the object's value is a string (more than 1 character) or an object
  * 
- * @param {objectOfKeyString} obj Main object
- * @param {string} key Key to search with object
- * @param {boolean} type Type of data to search => "o": object | "s": string
+ * @param {objectOfKeyString} obj - Main object
+ * @param {string} key - Key to search within the object
+ * @param {boolean} type - Type of data to search for => "o": object | "s": string | "n": number
  * @returns {Promise<JSON | null>}
  * 
  * @author Frash | Francesco Ascenzi
+ * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
+ * @license Apache 2.0
  */
 function checkSettings(obj: objectOfKeyString, key: string, type: string): boolean {
-  if (type == 's') {
+  if (type == 's') { // String
     if (!(key in obj) || !obj[key] || !(typeof obj[key] == 'string' && obj[key].length > 1)) {
       return false;
     }
-  } else if (type == 'o') {
+  } else if (type == 'o') { // Object
     if (!(key in obj) || !obj[key] || !(typeof obj[key] == 'object' && !Array.isArray(obj[key]))) {
       return false;
     }
-  } else if (type == 'n') {
+  } else if (type == 'n') { // Number
     if (!(key in obj) || typeof obj[key] != 'number' || obj[key] <= 0) {
       return false;
     }
@@ -64,10 +66,13 @@ function checkSettings(obj: objectOfKeyString, key: string, type: string): boole
 
 /** Parse settings from the file
  * 
- * @param {string} path Setting's file path
+ * @param {string} __root - Root's files path
+ * @param {string} settingsFilePath - Setting's file path
  * @returns {Promise<settingsInterface | null>}
  * 
  * @author Frash | Francesco Ascenzi
+ * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
+ * @license Apache 2.0
  */
 export default async function parseSettings(__root: string, settingsFilePath: string): Promise<settingsInterface | Error> {
 
@@ -100,7 +105,7 @@ export default async function parseSettings(__root: string, settingsFilePath: st
       !checkSettings(settings.connection, 'collection', 's') || !checkSettings(settings.files, 'inputFiles', 's') || 
       !checkSettings(settings.files, 'outputList', 's') || !checkSettings(settings.files, 'batchSize', 'n')
     ) {
-      throw new Error('One of "string"/"db"/"collection"/"inputFiles"/"outputList" key was not found in settings');
+      throw new Error('One of "string"/"db"/"collection"/"inputFiles"/"outputList" keys was not found in settings');
     }
 
     settings.files.inputFiles = path.join(__root, settings.files.inputFiles);

@@ -1,11 +1,14 @@
 import fs from 'fs';
 
-/** Read user's input and return it
+/** Read the user's input and return it
  * 
- * @param {string} question Question to ask
- * @return {string} User's input
+ * @param {string} question - Question to ask
+ * @param {string} bytes - How many bytes to store the user's input
+ * @return {string}
  * 
  * @author Frash | Francesco Ascenzi
+ * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
+ * @license Apache 2.0
  */
 export default function prompt(question: string, bytes: number): string | Error {
 
@@ -14,7 +17,7 @@ export default function prompt(question: string, bytes: number): string | Error 
   const buffer: Buffer = Buffer.alloc(bytes);
   let bytesRead: number = 0;
 
-  // Read sync user's input and store it within the buffer
+  // Read the user's input synchronously and store it in the buffer
   try {
     bytesRead = fs.readSync(process.stdin.fd, buffer, 0, bytes, null);
   } catch (err: unknown) {
@@ -28,7 +31,6 @@ export default function prompt(question: string, bytes: number): string | Error 
     }
   }
 
-  // Convert buffer to string and trim new line characters
-  const input: string = buffer.toString('utf8', 0, bytesRead).trim();
-  return input;
+  // Convert the buffer to a string and trim newline characters
+  return buffer.toString('utf8', 0, bytesRead).trim();
 }
