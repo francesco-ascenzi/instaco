@@ -23,12 +23,12 @@ Instaco generates:
 
 ## Collection structure
 This application creates a database named "Instagram" with a collection called "followers". The structure of the "followers" collection includes:  
-**- user:** string - The user's name  
-**- followIt:** boolean - True if you follow the user  
-**- followsMe:** boolean - True if the user follows you, false if they have unfollowed you  
-**- followsMeBefore:** boolean - True if the user has already followed you in the past  
-**- updated:** date - The last time the process was initiated  
-**- timestamp:** date - Timestamps from the followers/followings lists  
+- **user:** string - The user's name  
+- **followIt:** boolean - True if you follow the user  
+- **followsMe:** boolean - True if the user follows you, false if they have unfollowed you  
+- **followsMeBefore:** boolean - True if the user has already followed you in the past  
+- **updated:** date - The last time the process was initiated  
+- **timestamp:** date - Timestamps from the followers/followings lists  
 
 ## Funding
 If you liked this tool, consider funding it at [@PayPal](https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A) (the link is within package.json too)
