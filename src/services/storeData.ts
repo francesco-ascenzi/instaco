@@ -2,7 +2,7 @@ import fs, { ReadStream } from 'fs';
 import { AnyBulkWriteOperation, BSON, Collection, MongoClient } from 'mongodb';
 import vdck from 'vdck';
 
-import { getCollection } from '../lib/connection.js';
+import { getCollection } from '../lib/classes/connection.js';
 
 import { minStdResponse, stdResponse } from '../types/index.js';
 

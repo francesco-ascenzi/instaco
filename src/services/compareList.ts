@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { AnyBulkWriteOperation, BSON, Collection, MongoClient, WithId } from 'mongodb';
 import path from 'path';
-import { getCollection } from '../lib/connection.js';
+import { getCollection } from '../lib/classes/connection.js';
 import { minStdResponse, settings } from '../types/index.js';
 
 // Interfaces & types

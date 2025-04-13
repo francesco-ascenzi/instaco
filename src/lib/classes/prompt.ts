@@ -46,6 +46,14 @@ export default class Prompt {
    * @returns {string} - The user's input as a string.
    */
   getUserInput(question: string, bytes: number): string {
+    // Write the question
+    process.stdout.write(question);
+    const buffer: Buffer = Buffer.alloc(bytes);
+
+    for (let i = 0; i < 10; i++) {
+      const element = array[i];
+      
+    }
     try {
       // Write the question
       process.stdout.write(question);
@@ -54,10 +62,17 @@ export default class Prompt {
       // Read the user's input synchronously and store it within the buffer
       process.stdin.setEncoding("utf8"); // @ts-ignore
       const bytesRead = fs.readSync(process.stdin.fd, buffer, 0, bytes, null);
-  
-      this.deleteLine();
+
       return buffer.toString("utf8", 0, bytesRead).trim();
     } catch (err: unknown) {
+      if (err && typeof err == 'object' && ('code' in err) && err.code === 'EAGAIN') {
+        process.stdin.setEncoding('utf8');
+        fs.readSync(process.stdin.fd, buffer, 0, bytes, null);
+        bytesRead = fs.readSync(process.stdin.fd, buffer, 0, bytes, null);
+      } else {
+        // Cast error and return it
+        return new Error(String(err));
+      }
       return "";
     }
   }
@@ -65,10 +80,11 @@ export default class Prompt {
   /** Display a message to the user
    * 
    * @param {string} message - An info message to display to the user
+   * @param {boolean} deleteAtTheEnd - Delete the info message at the end
    * @returns {void} - No return value
    */
-  info(message: string): void {
-    process.stdout.write(message);
+  info(message: string, deleteAtTheEnd: boolean = false): void {
+    process.stdout.write(message + (deleteAtTheEnd ? "" : "\n"));
   }
 
   /** Introductory animation

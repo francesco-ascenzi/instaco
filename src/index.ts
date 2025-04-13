@@ -5,12 +5,12 @@
  * @license Apache 2.0
  */
 import fs from "fs/promises";
-import mongodb, { MongoClient } from "mongodb";
+import mongodb, { Collection, MongoClient } from "mongodb";
 import path from "path";
 import vdck from "vdck";
 
-import { connect, getCollection } from './lib/connection.js';
 import prompt from './lib/classes/prompt.js';
+import Connection from './lib/classes/connection.js';
 import { createDir, getRoot } from './lib/utilities.js';
 import readSettings from "./services/readSettings.js";
 import storeData from "./services/storeData.js";
@@ -19,7 +19,6 @@ import { stdResponse, settings, minStdResponse, extStdResponse } from "./types/i
 import compareLists from "./services/compareList.js";
 
 // Constants and variables
-const connection: prompt = new connection();
 const csl: prompt = new prompt();
 
 const __dirname: string = import.meta.dirname;
@@ -33,7 +32,7 @@ const __dirname: string = import.meta.dirname;
   const rootPath: string = getRoot(__dirname);
 
   // Check if settings file exists and read it
-  csl.info(`> Parsing settings file...`);
+  csl.info(`> Parsing settings file...`, true);
   const getSettings: extStdResponse<settings> = await readSettings(rootPath);
   csl.deleteLine();
   if (!getSettings.ok) {
@@ -44,6 +43,7 @@ const __dirname: string = import.meta.dirname;
   csl.info(`> ${getSettings.msg}`);
 
   // Check/create main i/o files folder
+  csl.info(`> Check dir...`, true);
   const inputDir: minStdResponse = await createDir(getSettings.value.files.inputFiles);
   if (!inputDir.ok) {
     csl.error(inputDir.msg);
@@ -57,59 +57,55 @@ const __dirname: string = import.meta.dirname;
   }
 
   // Handle connection and collections from MongoDB
-  let connection: MongoClient;
+  const mongoObj: Connection = new Connection(getSettings.value.connection.uri);
+  if (mongoObj.mongoErrors.length > 0) {
+    csl.error(mongoObj.mongoErrors.join("\n"));
+    return 1;
+  }
+
+  csl.info(`> Connected to \x1b[30m${getSettings.value.connection.uri}\x1b[0m`);
+
+  const collection: Collection | string = await mongoObj.useCollection(getSettings.value.connection.db, getSettings.value.connection.collection);
+  if (mongoObj.mongoErrors.length > 0) {
+    csl.error(mongoObj.mongoErrors.join("\n"));
+    return 1;
+  }
+
+  csl.info(`> Collection \x1b[30m${getSettings.value.connection.collection}\x1b[0m was found/created`);
+
+  // Retrieve files names within the main files folder
+  let filesFound: string[] = [];
   try {
-    const tryToConnect: stdResponse<MongoClient> = await connect(getSettings.value.connection.uri);
-    if (!tryToConnect.ok) throw new Error(tryToConnect.msg);
-    connection = tryToConnect.value;
+    filesFound = await fs.readdir(getSettings.value.files.inputFiles);
   } catch (err: unknown) {
     csl.error(String(err));
     return 1;
   }
-
-  // console.info(`> Connected to \x1b[30m${getSettings.value.connection.uri}\x1b[0m`);
-
-  // const collection: stdResponse<mongodb.Collection> = await getCollection(connection, getSettings.value.connection.db, getSettings.value.connection.collection);
-  // if (!collection.ok) {
-  //   console.error(errorLine, collection.msg, "\n");
-  //   return 1;
-  // }
-
-  // console.info(`> Collection \x1b[30m${getSettings.value.connection.collection}\x1b[0m was found/created`);
-
-  // // Retrieve files names within the main files folder
-  // let filesFound: string[] = [];
-  // try {
-  //   filesFound = await fs.readdir(getSettings.value.files.inputFiles);
-  // } catch (err: unknown) {
-  //   console.error(errorLine, String(err), "\n");
-  //   return 1;
-  // }
   
-  // // Extract files names
-  // let jsonFiles: string[] = [];
-  // for (let i = 0; i < filesFound.length; i++) {
-  //   if (filesFound[i].match(/\.json$/gmi)) {
-  //     jsonFiles.push(filesFound[i]);
-  //   }
-  // }
+  // Extract files names
+  let jsonFiles: string[] = [];
+  for (let i = 0; i < filesFound.length; i++) {
+    if (filesFound[i].match(/\.json$/gmi)) {
+      jsonFiles.push(filesFound[i]);
+    }
+  }
   
-  // // Check how many .json files were retrieved
-  // if (jsonFiles.length != 2) {
-  //   console.error(errorLine, `Instaco ${jsonFiles.length > 0 ? "found only 1 (" + jsonFiles.join(', ') + ")" : "didn't find"} .json files in the ${getSettings.value.files.inputFiles} folder\n`);
-  //   return 1;
-  // }
+  // Check how many .json files were retrieved
+  if (jsonFiles.length != 2) {
+    csl.error(`Instaco ${jsonFiles.length > 0 ? "found only 1 (" + jsonFiles.join(', ') + ")" : "didn't find"} .json files in the ${getSettings.value.files.inputFiles} folder\n`);
+    return 1;
+  }
 
-  // console.info(`> \x1b[30m${jsonFiles.join(', ')}\x1b[0m files found in \x1b[30m${getSettings.value.files.inputFiles}\x1b[0m`);
+  csl.info(`> \x1b[30m${jsonFiles.join(', ')}\x1b[0m files found in \x1b[30m${getSettings.value.files.inputFiles}\x1b[0m`);
 
-  // // Confirm the files
-  // const userInput: string = prompt(`> Confirm? (type 'y' to continue) `, 1);
-  // if (userInput.toLowerCase() != 'y') {
-  //   console.error(`> Process terminated due to user choice\n`);
-  //   return 1;
-  // }
+  // Confirm the files
+  const userInput: string = csl.getUserInput(`> Confirm? (type 'y' to continue) `, 1);
+  if (userInput.toLowerCase() != 'y') {
+    csl.error(`> Process terminated due to user choice`);
+    return 1;
+  }
 
-  // console.time('> Completed in'); // Initialize timer
+  console.time('> Completed in'); // Initialize timer
 
   // // Clean 'followers'/'followings' collections
   // const followers = await getCollection(connection, getSettings.value.connection.db, "followers");
