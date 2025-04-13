@@ -1,6 +1,6 @@
 {
   "connection": {
-    "string": "mongodb://127.0.0.1:27018/",
+    "uri": "mongodb://127.0.0.1:27018/",
     "db": "instagram",
     "collection": "trackFollowers"
   },

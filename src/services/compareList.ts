@@ -1,7 +1,8 @@
 import fs from 'fs';
-import mongo from 'mongodb';
+import { AnyBulkWriteOperation, BSON, Collection, MongoClient, WithId } from 'mongodb';
 import path from 'path';
-import { getCollection } from '../connection/index.js';
+import { getCollection } from '../lib/connection.js';
+import { minStdResponse, settings } from '../types/index.js';
 
 // Interfaces & types
 interface settingsInterface {
@@ -19,27 +20,27 @@ interface settingsInterface {
 
 /** Update main collection
  * 
- * @param {mongo.Collection<mongo.BSON.Document>} collection - Main collection
- * @param {mongo.Collection<mongo.BSON.Document>} diffCollection - 'followers'/'followings' collection based on 'type' param
+ * @param {Collection<BSON.Document>} collection - Main collection
+ * @param {Collection<BSON.Document>} diffCollection - 'followers'/'followings' collection based on 'type' param
  * @param {number} type - Collection's type | 0 => 'followers', 1 => 'followings'
- * @param {settingsInterface} settings - Settings
- * @returns {Promise<true | Error>}
+ * @param {settings} settings - Settings
+ * @returns {Promise<minStdResponse>}
  */
 async function updateCollection(
-  collection: mongo.Collection<mongo.BSON.Document>, 
-  diffCollection: mongo.Collection<mongo.BSON.Document>, 
+  collection: Collection<BSON.Document>, 
+  diffCollection: Collection<BSON.Document>, 
   type: number, 
-  settings: settingsInterface
+  settings: settings
 ): Promise<true | Error> {
 
-  let bulkArray: mongo.AnyBulkWriteOperation<mongo.BSON.Document>[] = [];
+  let bulkArray: AnyBulkWriteOperation<BSON.Document>[] = [];
 
   // Calculate how many cycles needs to the for loop and retrieve 'n' elements
   const totalDiffDocuments: number = await diffCollection.countDocuments();
   const howManyCycles = Math.ceil(totalDiffDocuments / settings.files.batchSize);
 
   for (let i = 0; i < howManyCycles; i++) {
-    const currentBatch: mongo.WithId<mongo.BSON.Document>[] = await diffCollection.find().limit(settings.files.batchSize).skip(i * settings.files.batchSize).toArray();
+    const currentBatch: WithId<BSON.Document>[] = await diffCollection.find().limit(settings.files.batchSize).skip(i * settings.files.batchSize).toArray();
 
     if (currentBatch.length > 0) {
       // Process the current batch
@@ -114,27 +115,23 @@ async function updateCollection(
   return true;
 }
 
-/** Update main collection and generate a diff list between followers and followings
+/** Compare 'followers' and 'followings' lists
  * 
- * @param {mongo.MongoClient} connection - Output path
- * @param {mongo.Collection<mongo.BSON.Document>} collection - Output path
- * @param {settingsInterface} settings - Settings
+ * @param {MongoClient} connection - Output path
+ * @param {Collection<BSON.Document>} collection - Output path
+ * @param {settings} settings - Settings
  * @param {string} rootPath - Root's files path
- * @returns {Promise<true | Error>}
- * 
- * @author Frash | Francesco Ascenzi
- * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
- * @license Apache 2.0
+ * @returns {Promise<true | Error>} - True if the diff list was generated successfully, otherwise an Error
  */
-export default async function generateDiffLists(
-  connection: mongo.MongoClient, 
-  collection: mongo.Collection<mongo.BSON.Document>, 
-  settings: settingsInterface
-): Promise<true | Error> {
+export default async function compareLists(
+  connection: MongoClient, 
+  collection: Collection<BSON.Document>, 
+  settings: settings
+): Promise<minStdResponse> {
 
   // Get both collections
-  const followers: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followers');
-  const followings: mongo.Collection<mongo.BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followings');
+  const followers: Collection<BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followers');
+  const followings: Collection<BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followings');
 
   if (followers instanceof Error) {
     return new Error(String(followers));
