@@ -95,3 +95,58 @@ export async function getCollection(conn: MongoClient, dbName: string, collectio
     value: conn.db(dbName).collection(collectionName)
   };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { MongoClient, Db, Collection } from 'mongodb';
+
+export default class MongoClientManager {
+  private client: MongoClient;
+  private db?: Db;
+
+  constructor(
+    private uri: string,
+    private dbName: string
+  ) {
+    this.client = new MongoClient(this.uri);
+  }
+
+  // Connessione al database
+  async connect(): Promise<void> {
+    try {
+      await this.client.connect();
+      this.db = this.client.db(this.dbName);
+      console.log(`✅ Connected to MongoDB database: ${this.dbName}`);
+    } catch (error) {
+      console.error("❌ MongoDB connection error:", error);
+      throw error;
+    }
+  }
+
+  // Chiusura connessione
+  async close(): Promise<void> {
+    await this.client.close();
+    console.log("🔌 MongoDB connection closed");
+  }
+
+  // Ottieni una collection e agisci con una callback
+  async useCollection<T>(
+    collectionName: string,
+    callback: (collection: Collection) => Promise<T>
+  ): Promise<T> {
+    if (!this.db) throw new Error("Database connection not initialized. Call connect() first.");
+    const collection = this.db.collection(collectionName);
+    return await callback(collection);
+  }
+}
