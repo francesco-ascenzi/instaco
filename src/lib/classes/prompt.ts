@@ -47,6 +47,7 @@ export default class Prompt {
   
     return new Promise((res: (value: string | PromiseLike<string>) => void, rej: (reason?: any) => void) => {
       rl.question(question, (answer: string) => {
+        rl.close();
         res(answer.trim().substring(0, bytes));
       });
     });

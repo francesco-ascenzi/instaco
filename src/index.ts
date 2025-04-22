@@ -68,12 +68,18 @@ const print: prompt = new prompt();
     print.info(`> Connected to \x1b[30m${getSettings.value.connection.uri}\x1b[0m`);
 
     const collection: Collection | string = await mongo.useCollection(getSettings.value.connection.db, getSettings.value.connection.collection);
-    if (mongo.mongoErrors.length > 0) {
-      print.error(mongo.mongoErrors.join("\n"));
+    if (typeof collection === "string") {
+      print.error(collection);
       break;
     }
 
     print.info(`> Collection \x1b[30m${getSettings.value.connection.collection}\x1b[0m was found/created`);
+
+    // Check conn errors
+    if (mongo.mongoErrors.length > 0) {
+      print.error(mongo.mongoErrors.join("\n"));
+      break;
+    }
 
     // Get files names within the main files folder
     print.info(`> Getting files names...`, true);
