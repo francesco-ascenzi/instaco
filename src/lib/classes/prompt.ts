@@ -1,11 +1,9 @@
-/** =============================================================================================== */
-/** 
+/** ===============================================================================================
  * @author Frash | Francesco Ascenzi
  * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
- * @license Apache 2.0
- */ 
-/** =============================================================================================== */
-import fs from "fs";
+ * @license Apache 2.0 
+================================================================================================ */
+import readline from "readline";
 
 /** 
  * @class Prompt
@@ -13,11 +11,7 @@ import fs from "fs";
  * This class is responsible for handling user input and displaying messages to the console.
  * It provides methods for getting user input, displaying an introductory animation, and managing messages.
  * 
- * @property {string} subTitle - The subtitle displayed in the console
- * @property {string} messages - The messages to be displayed in the console
- * 
- * @method getUserInput: string - Reads user input from the console
- * @method intro: Promise<void> - Displays an introductory animation in the console
+ * @property {string} errorLine - The error line prefix for console messages
  */
 export default class Prompt {
   protected errorLine: string = '\x1b[31m> Error:\x1b[0m';
@@ -43,41 +37,22 @@ export default class Prompt {
   /** Get user input from the console
    * @param {string} question - The question to ask the user
    * @param {number} bytes - The number of bytes to read from the input
-   * @returns {string} - The user's input as a string.
+   * @returns {string} - The user's input as a string
    */
-  getUserInput(question: string, bytes: number): string {
-    // Write the question
-    process.stdout.write(question);
-    const buffer: Buffer = Buffer.alloc(bytes);
-
-    for (let i = 0; i < 10; i++) {
-      const element = array[i];
-      
-    }
-    try {
-      // Write the question
-      process.stdout.write(question);
-      const buffer: Buffer = Buffer.alloc(bytes);
+  getUserInput(question: string, bytes: number): Promise<string> {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
   
-      // Read the user's input synchronously and store it within the buffer
-      process.stdin.setEncoding("utf8"); // @ts-ignore
-      const bytesRead = fs.readSync(process.stdin.fd, buffer, 0, bytes, null);
-
-      return buffer.toString("utf8", 0, bytesRead).trim();
-    } catch (err: unknown) {
-      if (err && typeof err == 'object' && ('code' in err) && err.code === 'EAGAIN') {
-        process.stdin.setEncoding('utf8');
-        fs.readSync(process.stdin.fd, buffer, 0, bytes, null);
-        bytesRead = fs.readSync(process.stdin.fd, buffer, 0, bytes, null);
-      } else {
-        // Cast error and return it
-        return new Error(String(err));
-      }
-      return "";
-    }
+    return new Promise((res: (value: string | PromiseLike<string>) => void, rej: (reason?: any) => void) => {
+      rl.question(question, (answer: string) => {
+        res(answer.trim().substring(0, bytes));
+      });
+    });
   }
 
-  /** Display a message to the user
+  /** Display an info message to the user
    * 
    * @param {string} message - An info message to display to the user
    * @param {boolean} deleteAtTheEnd - Delete the info message at the end
@@ -94,30 +69,35 @@ export default class Prompt {
   async intro(): Promise<void> {
     process.stdout.write("\x1Bc");
     process.stdout.write(
-      " _         _               \n" + 
-      "|_|___ ___| |_ ___ ___ ___\n" +  
-      "| |   |_ -|  _| .\"|  _| . |\n" + 
-      "|_|_|_|___|_| |__,|___|___|\n" + 
-      "\x1b[30m|_|_|_|___|_| |__,|___|___|\x1b[0m\n\n" + 
-      "---------------------------\n\n" + 
-      "Instaco is a tool for tracking your Instagram followers/followings\n\n" + 
+      " _         _               \n" +
+      "|_|___ ___| |_ ___ ___ ___\n" +
+      "| |   |_ -|  _| .\"|  _| . |\n" +
+      "|_|_|_|___|_| |__,|___|___|\n" +
+      "\x1b[30m|_|_|_|___|_| |__,|___|___|\x1b[0m\n\n" +
+      "---------------------------\n\n" +
+      "Instaco is a tool for tracking your Instagram followers/followings\n\n" +
       "If you liked it, please consider to donating at:\n"
     );
 
     for (let i = 0; i < 6; i++) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 250));
       this.deleteLine();
-      process.stdout.write(i % 2 ? 
-        "\x1b[4mhttps://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A\x1b[0m" : 
+      process.stdout.write(i % 2 ?
+        "\x1b[4mhttps://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A\x1b[0m" :
         "\x1b[30m\x1b[4mhttps://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A\x1b[0m"
       );
     }
 
     this.deleteLine();
+
     process.stdout.write(`\x1b[4mhttps://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A\x1b[0m\n\n`);
+
     await new Promise(resolve => setTimeout(resolve, 250));
+
     process.stdout.write("\x1b[30m@author: Francesco 'Frash' Ascenzi " + "| \x1b[4mhttps://www.github.com/francesco-ascenzi\x1b[0m\n\n");
+
     await new Promise(resolve => setTimeout(resolve, 250));
+
     process.stdout.write("---------------------------\n\n");
   }
 }

@@ -1,13 +1,12 @@
-/** INSTACO | A tool to compare Instagram's followers/followings and track them over time with Node and MongoDB
+/** ===============================================================================================
+ * INSTACO | A tool to compare Instagram's followers/followings and track them over time with Node and MongoDB
  * 
  * @author Frash | Francesco Ascenzi
  * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
- * @license Apache 2.0
- */
-import fs from "fs/promises";
-import mongodb, { Collection, MongoClient } from "mongodb";
+ * @license Apache 2.0 
+================================================================================================ */
+import { Collection } from "mongodb";
 import path from "path";
-import vdck from "vdck";
 
 import prompt from './lib/classes/prompt.js';
 import Connection from './lib/classes/connection.js';
@@ -17,143 +16,146 @@ import storeData from "./services/storeData.js";
 
 import { stdResponse, settings, minStdResponse, extStdResponse } from "./types/index.js";
 import compareLists from "./services/compareList.js";
+import getFilesNames from "./services/getFilesNames.js";
 
 // Constants and variables
-const csl: prompt = new prompt();
+const __dirname: string = import.meta.url;
+const __rootdir: string = getRoot(__dirname);
 
-const __dirname: string = import.meta.dirname;
+const print: prompt = new prompt();
 
-(async (): Promise<number> => {
+(async (): Promise<void> => {
+  while (true) {
+    // Print the intro
+    await print.intro();
 
-  // Print the intro
-  await csl.intro();
+    // Check if settings file exists and read it
+    print.info(`> Parsing settings file...`, true);
+    const getSettings: extStdResponse<settings> = await readSettings(__rootdir);
+    print.deleteLine();
+    if (!getSettings.ok) {
+      print.error(getSettings.msg);
+      break;
+    }
 
-  // Get the project's root dir
-  const rootPath: string = getRoot(__dirname);
+    print.info(`> ${getSettings.msg}`);
 
-  // Check if settings file exists and read it
-  csl.info(`> Parsing settings file...`, true);
-  const getSettings: extStdResponse<settings> = await readSettings(rootPath);
-  csl.deleteLine();
-  if (!getSettings.ok) {
-    csl.error(getSettings.msg);
-    return 1;
-  }
+    // Check/create main i/o files folder
+    print.info(`> Checking dir...`, true);
+    const inputDir: minStdResponse = await createDir(getSettings.value.files.inputFiles);
+    if (!inputDir.ok) {
+      print.error(inputDir.msg);
+      break;
+    }
 
-  csl.info(`> ${getSettings.msg}`);
+    const outputDir: minStdResponse = await createDir(getSettings.value.files.outputList);
+    if (!outputDir.ok) {
+      print.error(outputDir.msg);
+      break;
+    }
 
-  // Check/create main i/o files folder
-  csl.info(`> Check dir...`, true);
-  const inputDir: minStdResponse = await createDir(getSettings.value.files.inputFiles);
-  if (!inputDir.ok) {
-    csl.error(inputDir.msg);
-    return 1;
-  }
+    print.deleteLine();
+    print.info(`> Try to connect to \x1b[30m${getSettings.value.connection.uri}\x1b[0m`, true);
 
-  const outputDir: minStdResponse = await createDir(getSettings.value.files.outputList);
-  if (!outputDir.ok) {
-    csl.error(outputDir.msg);
-    return 1;
-  }
+    // Handle connection and collections from MongoDB
+    const mongo: Connection = new Connection(getSettings.value.connection.uri);
+    print.deleteLine();
+    if (mongo.mongoErrors.length > 0) {
+      print.error(mongo.mongoErrors.join("\n"));
+      break;
+    }
 
-  // Handle connection and collections from MongoDB
-  const mongoObj: Connection = new Connection(getSettings.value.connection.uri);
-  if (mongoObj.mongoErrors.length > 0) {
-    csl.error(mongoObj.mongoErrors.join("\n"));
-    return 1;
-  }
+    print.info(`> Connected to \x1b[30m${getSettings.value.connection.uri}\x1b[0m`);
 
-  csl.info(`> Connected to \x1b[30m${getSettings.value.connection.uri}\x1b[0m`);
+    const collection: Collection | string = await mongo.useCollection(getSettings.value.connection.db, getSettings.value.connection.collection);
+    if (mongo.mongoErrors.length > 0) {
+      print.error(mongo.mongoErrors.join("\n"));
+      break;
+    }
 
-  const collection: Collection | string = await mongoObj.useCollection(getSettings.value.connection.db, getSettings.value.connection.collection);
-  if (mongoObj.mongoErrors.length > 0) {
-    csl.error(mongoObj.mongoErrors.join("\n"));
-    return 1;
-  }
+    print.info(`> Collection \x1b[30m${getSettings.value.connection.collection}\x1b[0m was found/created`);
 
-  csl.info(`> Collection \x1b[30m${getSettings.value.connection.collection}\x1b[0m was found/created`);
+    // Get files names within the main files folder
+    print.info(`> Getting files names...`, true);
+    const jsonFiles: stdResponse<string[]> = await getFilesNames(getSettings.value.files.inputFiles);
+    print.deleteLine();
+    if (!jsonFiles.ok) {
+      print.error(jsonFiles.msg);
+      break;
+    }
 
-  // Retrieve files names within the main files folder
-  let filesFound: string[] = [];
-  try {
-    filesFound = await fs.readdir(getSettings.value.files.inputFiles);
-  } catch (err: unknown) {
-    csl.error(String(err));
-    return 1;
-  }
+    if (jsonFiles.value.length != 2) {
+      print.error(`Instaco ${jsonFiles.value.length > 0 ? "found only 1 (" + jsonFiles.value.join(', ') + ")" : "didn't find"} .json files in the ${getSettings.value.files.inputFiles} folder\n`);
+      break;
+    }
+
+    print.info(`> Files found in ${getSettings.value.files.inputFiles} folder: \x1b[30m${jsonFiles.value.join(", ")}\x1b[0m`);
+
+    const userInput: string = await print.getUserInput(`> Do you want to continue? (y/n) | `, 1);
+    if (userInput.toLowerCase() !== "y") {
+      print.error("Aborted by user");
+      break;
+    }
+
+    console.time('> Completed in'); // Initialize timer
+
+    // Clean 'followers'/'followings' collections
+    const followers: string | Collection = await mongo.useCollection(getSettings.value.connection.db, "followers");
+    if (typeof followers === "string") {
+      print.error(followers);
+      break;
+    }
+
+    const followings: string | Collection = await mongo.useCollection(getSettings.value.connection.db, "followings");
+    if (typeof followings === "string") {
+      print.error(followings);
+      break;
+    }
+
+    // Delete all documents in the collections
+    await followers.deleteMany({});
+    await followings.deleteMany({});
+
+    // Process each file
+    for (let i = 0; i < 2; i++) {
+      const filePath: string = path.join(getSettings.value.files.inputFiles, jsonFiles.value[i]);
+
+      const processFileResponse: minStdResponse = await storeData(mongo, getSettings.value.connection.db, filePath, getSettings.value.files.batchSize);
+      if (!processFileResponse.ok) {
+        print.error(processFileResponse.msg);
+        break;
+      }
+
+      print.info(`> Processed \x1b[30m${filePath}\x1b[0m`);
+    }
+
+    // Generate .txt diff files
+    print.info(`> Generating diff list`, true);
+    const processDiff: minStdResponse = await compareLists(mongo, getSettings.value);
+    print.deleteLine();
+    if (!processDiff.ok) {
+      print.error(processDiff.msg);
+      break;
+    }
+
+    print.info(`> \x1b[30m${getSettings.value.connection.collection}\x1b[0m collection was updated`);
+
+    // Close db connection and prints end messages
+    await mongo.close();
+
+    print.info(`> MongoDB connection closed\x1b[32m\n`);
   
-  // Extract files names
-  let jsonFiles: string[] = [];
-  for (let i = 0; i < filesFound.length; i++) {
-    if (filesFound[i].match(/\.json$/gmi)) {
-      jsonFiles.push(filesFound[i]);
+    console.timeEnd('> Completed in');
+
+    print.info('\x1b[0m\n\x1b[30mIf you liked this tool, consider funding it at:\x1b[0m ' + 
+      'https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A ' + 
+      '\x1b[30m(the link is within package.json too)\x1b[0m\n'
+    );
+
+    const restartUserInput: string = await print.getUserInput(`> Do you want to restart the service? (y/n) | `, 1);
+    if (restartUserInput.toLowerCase() !== "y") {
+      print.info("Exiting...");
+      process.exit(0);
     }
   }
-  
-  // Check how many .json files were retrieved
-  if (jsonFiles.length != 2) {
-    csl.error(`Instaco ${jsonFiles.length > 0 ? "found only 1 (" + jsonFiles.join(', ') + ")" : "didn't find"} .json files in the ${getSettings.value.files.inputFiles} folder\n`);
-    return 1;
-  }
-
-  csl.info(`> \x1b[30m${jsonFiles.join(', ')}\x1b[0m files found in \x1b[30m${getSettings.value.files.inputFiles}\x1b[0m`);
-
-  // Confirm the files
-  const userInput: string = csl.getUserInput(`> Confirm? (type 'y' to continue) `, 1);
-  if (userInput.toLowerCase() != 'y') {
-    csl.error(`> Process terminated due to user choice`);
-    return 1;
-  }
-
-  console.time('> Completed in'); // Initialize timer
-
-  // // Clean 'followers'/'followings' collections
-  // const followers = await getCollection(connection, getSettings.value.connection.db, "followers");
-  // if (!followers.ok) {
-  //   console.error(errorLine, followers.msg, "\n");
-  //   return 1;
-  // }
-
-  // const followings = await getCollection(connection, getSettings.value.connection.db, "followings");
-  // if (!followings.ok) {
-  //   console.error(errorLine, followings.msg, "\n");
-  //   return 1;
-  // }
-
-  // await followers.value.deleteMany({});
-  // await followings.value.deleteMany({});
-
-  // // Process each file
-  // for (let i = 0; i < 2; i++) {
-  //   const filePath: string = path.join(getSettings.value.files.inputFiles, jsonFiles[i]);
-
-  //   const processFileResponse: minStdResponse = await storeData(connection, getSettings.value.connection.db, filePath, getSettings.value.files.batchSize);
-  //   if (!processFileResponse.ok) {
-  //     console.error(errorLine, processFileResponse.msg, "\n");
-  //     return 1;
-  //   }
-
-  //   console.info(`> Processed \x1b[30m${filePath}\x1b[0m`);
-  // }
-
-  // // Generate .txt diff files
-  // const processDiff: minStdResponse = await compareLists(connection, collection.value, getSettings.value);
-  // if (!processDiff.ok) {
-  //   console.error(errorLine, processDiff.msg, "\n");
-  //   return 1;
-  // }
-
-  // console.info(`> \x1b[30m${getSettings.value.connection.collection}\x1b[0m collection was updated`);
-
-  // // Close db connection and prints end messages
-  // await connection.close(true);
-
-  // console.info(`> MongoDB connection closed\x1b[32m\n`);
-  // console.timeEnd('> Completed in');
-  // console.info('\x1b[0m\n\x1b[30mIf you liked this tool, consider funding it at:\x1b[0m ' + 
-  //   'https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A ' + 
-  //   '\x1b[30m(the link is within package.json too)\x1b[0m\n'
-  // );
-
-  return 0;
 })();

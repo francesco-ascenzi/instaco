@@ -1,3 +1,4 @@
+// Interfaces
 export interface settings {
   connection: {
     uri: string,
@@ -11,6 +12,7 @@ export interface settings {
   }
 };
 
+// Types
 export type extStdResponse<T> = {
   ok: true,
   msg: string,

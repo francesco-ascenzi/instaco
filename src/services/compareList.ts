@@ -1,45 +1,43 @@
-import fs from 'fs';
-import { AnyBulkWriteOperation, BSON, Collection, MongoClient, WithId } from 'mongodb';
-import path from 'path';
-import { getCollection } from '../lib/classes/connection.js';
-import { minStdResponse, settings } from '../types/index.js';
+/** ===============================================================================================
+ * @author Frash | Francesco Ascenzi
+ * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
+ * @license Apache 2.0 
+================================================================================================ */
+import fs from "fs";
+import { AnyBulkWriteOperation, BSON, Collection, WithId } from "mongodb";
+import path from "path";
 
-// Interfaces & types
-interface settingsInterface {
-  "connection": {
-    "string": string,
-    "db": string,
-    "collection": string
-  },
-  "files": {
-    "batchSize": number,
-    "inputFiles": string,
-    "outputList": string
-  }
-};
+import { minStdResponse, settings } from "../types/index.js";
+import Connection from "../lib/classes/connection.js";
 
-/** Update main collection
+/** Update the main collection with the followers/followings data
  * 
- * @param {Collection<BSON.Document>} collection - Main collection
- * @param {Collection<BSON.Document>} diffCollection - 'followers'/'followings' collection based on 'type' param
- * @param {number} type - Collection's type | 0 => 'followers', 1 => 'followings'
- * @param {settings} settings - Settings
- * @returns {Promise<minStdResponse>}
+ * @param {Collection} collection - Main collection
+ * @param {Collection} diffCollection - Followers or followings collection
+ * @param {number} type - 0 for followers, 1 for followings
+ * @param {settings} settings - Settings object
+ * @returns {Promise<boolean | Error>} - true if the operation is successful, Error if not
  */
 async function updateCollection(
-  collection: Collection<BSON.Document>, 
-  diffCollection: Collection<BSON.Document>, 
+  collection: Collection, 
+  diffCollection: Collection, 
   type: number, 
   settings: settings
-): Promise<true | Error> {
+): Promise<boolean | Error> {
 
+  // Initialize the bulk array
   let bulkArray: AnyBulkWriteOperation<BSON.Document>[] = [];
 
   // Calculate how many cycles needs to the for loop and retrieve 'n' elements
-  const totalDiffDocuments: number = await diffCollection.countDocuments();
-  const howManyCycles = Math.ceil(totalDiffDocuments / settings.files.batchSize);
+  let cycles: number = 0;
+  try {
+    const total: number = await diffCollection.countDocuments();
+    cycles = Math.ceil(total / settings.files.batchSize);
+  } catch (err: unknown) {
+    return new Error(String(err));
+  }
 
-  for (let i = 0; i < howManyCycles; i++) {
+  for (let i = 0; i < cycles; i++) {
     const currentBatch: WithId<BSON.Document>[] = await diffCollection.find().limit(settings.files.batchSize).skip(i * settings.files.batchSize).toArray();
 
     if (currentBatch.length > 0) {
@@ -104,7 +102,6 @@ async function updateCollection(
           bulkArray = [];
         } catch(err: unknown) {
           bulkArray = [];
-
           return new Error(String(err));
         }
       }
@@ -115,30 +112,40 @@ async function updateCollection(
   return true;
 }
 
-/** Compare 'followers' and 'followings' lists
+/** Compare the lists of followers and followings
  * 
- * @param {MongoClient} connection - Output path
- * @param {Collection<BSON.Document>} collection - Output path
- * @param {settings} settings - Settings
- * @param {string} rootPath - Root's files path
- * @returns {Promise<true | Error>} - True if the diff list was generated successfully, otherwise an Error
+ * @param {MongoClient} conn - MongoDB connection object
+ * @param {settings} settings - Settings object
+ * @returns {Promise<minStdResponse>} - Response object indicating success or failure
  */
 export default async function compareLists(
-  connection: MongoClient, 
-  collection: Collection<BSON.Document>, 
+  conn: Connection, 
   settings: settings
 ): Promise<minStdResponse> {
 
-  // Get both collections
-  const followers: Collection<BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followers');
-  const followings: Collection<BSON.Document> | Error = await getCollection(connection, settings.connection.db, 'followings');
-
-  if (followers instanceof Error) {
-    return new Error(String(followers));
+  // Initialize the collections
+  const followers: Collection | string = await conn.useCollection(settings.connection.db, "followers");
+  if (typeof followers === "string") {
+    return {
+      ok: false,
+      msg: followers
+    };
   }
 
-  if (followings instanceof Error) {
-    return new Error(String(followings));
+  const followings: Collection | string = await conn.useCollection(settings.connection.db, "followings");
+  if (typeof followings === "string") {
+    return {
+      ok: false,
+      msg: followings
+    };
+  }
+
+  const collection: Collection | string = await conn.useCollection(settings.connection.db, settings.connection.collection);
+  if (typeof collection === "string") {
+    return {
+      ok: false,
+      msg: collection
+    };
   }
 
   // Reset followsMe and followIt
@@ -147,12 +154,18 @@ export default async function compareLists(
   // Updates main collection
   const followersUpProcess = await updateCollection(collection, followers, 0, settings);
   if (followersUpProcess instanceof Error) {
-    return new Error(String(followersUpProcess));
+    return {
+      ok: false,
+      msg: String(followersUpProcess)
+    };
   }
 
   const followingsUpProcess = await updateCollection(collection, followings, 1, settings);
   if (followingsUpProcess instanceof Error) {
-    return new Error(String(followingsUpProcess));
+    return {
+      ok: false,
+      msg: String(followingsUpProcess)
+    };
   }
 
   // Add followsMe: false to new followings that don't follow me
@@ -181,31 +194,36 @@ export default async function compareLists(
 
   // Generate a new .txt file
   const year = new Date().getFullYear();
-  const month = (1 + new Date().getMonth()).toString().padStart(2, '0');
-  const day = new Date().getDate().toString().padStart(2, '0');
+  const month = (1 + new Date().getMonth()).toString().padStart(2, "0");
+  const day = new Date().getDate().toString().padStart(2, "0");
   const generatedFileName: string = `list_${year}${month}${day}.txt`;
 
   const listFilePath: string = path.join(settings.files.outputList, generatedFileName);
 
   try {
     await fs.promises.access(listFilePath, fs.constants.F_OK);
-    await fs.promises.writeFile(listFilePath, '', 'utf8');
+    await fs.promises.writeFile(listFilePath, "", "utf8");
   } catch (err: unknown) {
     try {
-      await fs.promises.writeFile(listFilePath, '', 'utf8');
+      await fs.promises.writeFile(listFilePath, "", "utf8");
     } catch (permErr: unknown) {
-      return new Error(String(permErr));
+      return {
+        ok: false,
+        msg: String(permErr)
+      };
     }
   }
 
   for (let i = 0; i < differences.length; i++) {
-    if (('user' in differences[i]) && 
+    if (("user" in differences[i]) && 
       differences[i].user && 
-      typeof differences[i].user == 'string'
+      typeof differences[i].user == "string"
     ) {
-      await fs.promises.appendFile(listFilePath, `${differences[i].user}\n`, 'utf8');
+      await fs.promises.appendFile(listFilePath, `${differences[i].user}\n`, "utf8");
     }
   }
 
-  return true;
+  return {
+    ok: true
+  };
 }

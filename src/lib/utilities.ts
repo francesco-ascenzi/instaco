@@ -1,19 +1,18 @@
-/** =============================================================================================== */
-/** 
+/** ===============================================================================================
  * @author Frash | Francesco Ascenzi
  * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
- * @license Apache 2.0
- */ 
-/** =============================================================================================== */
+ * @license Apache 2.0 
+================================================================================================ */
 import fs from "fs";
+import { FileHandle } from "fs/promises";
 import path from "path";
 
-import { minStdResponse } from "../types/index.js";
+import { minStdResponse, stdResponse } from "../types/index.js";
 
 /** Create a directory if it doesn't exist
  * 
  * @param {string} dirPath - Path to the directory
- * @returns Path to the created directory
+ * @returns {minStdResponse} - Response object indicating success or failure
  */
 export async function createDir(dirPath: string): Promise<minStdResponse> {
   try {
@@ -28,7 +27,7 @@ export async function createDir(dirPath: string): Promise<minStdResponse> {
       };
     }
   }
-  
+
   return {
     ok: true
   };
@@ -37,15 +36,23 @@ export async function createDir(dirPath: string): Promise<minStdResponse> {
 /** Read a file and return its content
  * 
  * @param {string} filePath - Path to the file
- * @returns {string} - Content of the file
+ * @returns {stdResponse<string>} - Response object containing the file content or an error message
  */
-export async function readFile(filePath: string): Promise<string> {
+export async function readFile(filePath: string): Promise<stdResponse<string>> {
   try {
-    await fs.promises.open(filePath, "a+");
-    const content = await fs.promises.readFile(filePath, "utf-8");
-    return content;
+    // Try to access the file
+    const tryToOpen: FileHandle = await fs.promises.open(filePath, "a+");
+    await tryToOpen.close();
+
+    return {
+      ok: true,
+      value: await fs.promises.readFile(filePath, "utf-8")
+    };
   } catch (err: unknown) {
-    return "";
+    return {
+      ok: false,
+      msg: String(err)
+    };
   }
 }
 
@@ -55,7 +62,8 @@ export async function readFile(filePath: string): Promise<string> {
  * @returns {string} - Path to the root directory
  */
 export function getRoot(mainDirPath: string): string {
-  const rootArray: string[] = mainDirPath.trim().split(path.sep).slice(0, -1);
+  mainDirPath = mainDirPath.replace(/^file:\/\/\//g, process.platform === "win32" ? "" : "/");
+  const rootArray: string[] = mainDirPath.trim().split("/").slice(0, -2);
   if (rootArray.length == 0) return path.sep;
   return rootArray.join(path.sep);
 }

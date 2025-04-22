@@ -1,10 +1,15 @@
+/** ===============================================================================================
+ * @author Frash | Francesco Ascenzi
+ * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
+ * @license Apache 2.0 
+================================================================================================ */
 import fs, { ReadStream } from 'fs';
-import { AnyBulkWriteOperation, BSON, Collection, MongoClient } from 'mongodb';
+import { AnyBulkWriteOperation, BSON, Collection } from 'mongodb';
 import vdck from 'vdck';
 
-import { getCollection } from '../lib/classes/connection.js';
+import Connection from '../lib/classes/connection.js';
 
-import { minStdResponse, stdResponse } from '../types/index.js';
+import { minStdResponse } from '../types/index.js';
 
 // Constants and variables
 const stringToSearch: string = '"string_list_data": [';
@@ -12,6 +17,13 @@ const endStringToSearch: string = ']';
 const validate: vdck = new vdck(false);
 
 let bulkUsersLists: AnyBulkWriteOperation<BSON.Document>[] = [];
+
+// Types and interfaces
+interface userFile {
+  href?: string,
+  value?: string,
+  timestamp?: number
+};
 
 /** Check if the data params corresponds to the std Instagram followers/followings keys/values object and push it to the bulkUsersLists
  * 
@@ -25,11 +37,8 @@ let bulkUsersLists: AnyBulkWriteOperation<BSON.Document>[] = [];
  */
 function checkJSON(data: string): true | Error {
   try {
-    const jsonedData: {
-      href?: string;
-      value?: string;
-      timestamp?: number;
-    } = JSON.parse(data);
+    // Parse the data
+    const jsonedData: userFile = JSON.parse(data);
 
     // If the std Instagram followers/followings keys/values object fits
     if (validate.sameObjects(jsonedData, {
@@ -58,7 +67,7 @@ function checkJSON(data: string): true | Error {
       return true;
     }
 
-    throw new Error(`One or both of the 'value' and 'timestamp' keys are missing`);
+    throw new Error(`It seems that the file is not a standard Instagram followers/followings file`);
   } catch (err: unknown) {
     return new Error(String(err));
   }
@@ -72,32 +81,31 @@ function checkJSON(data: string): true | Error {
  * @param {number} batchSize - Max batch size to process at time
  * @returns {Promise<minStdResponse>} - MongoDB collection object
  */
-export default async function processFile(conn: MongoClient, dbName: string, filePath: string, batchSize: number): Promise<minStdResponse> {
+export default async function processFile(conn: Connection, dbName: string, filePath: string, batchSize: number): Promise<minStdResponse> {
+  // Collection check and creation
   let firstChunk: boolean = true;
-  let followings: boolean = false;
-
-  let collection: stdResponse<Collection> = await getCollection(conn, dbName, 'followers');
-  if (!collection.ok) {
+  let collection: Collection | string = await conn.useCollection(dbName, "followers");
+  if (typeof collection === "string") {
     return {
       ok: false,
       msg: String(collection)
     };
   }
 
-  // Create a read stream and process file's data
   try {
+    // Initialize read stream and variables
+    let incompleteChunk: string = "";
     const readStream: ReadStream = fs.createReadStream(filePath, { encoding: "utf-8" });
 
-    let incompleteChunk: string = "";
+    // Process file line by line
     for await (let chunk of readStream) {
       let buffer: string = incompleteChunk + chunk;
 
       // Checks if the current file is for followers or followings
       if (firstChunk) {
         if (buffer.indexOf("relationships_following") >= 0) {
-          followings = true;
-          collection = await getCollection(conn, dbName, "followings");
-          if (!collection.ok) {
+          collection = await conn.useCollection(dbName, "followings");
+          if (typeof collection === "string") {
             return {
               ok: false,
               msg: String(collection)
@@ -125,7 +133,7 @@ export default async function processFile(conn: MongoClient, dbName: string, fil
 
           // Checks bulkUsersLists length and every 'batchSize' push data into MongoDB
           if (bulkUsersLists.length == batchSize) {
-            await collection.value.bulkWrite(bulkUsersLists);
+            await collection.bulkWrite(bulkUsersLists);
             bulkUsersLists = [];
           }
 
@@ -142,10 +150,8 @@ export default async function processFile(conn: MongoClient, dbName: string, fil
 
     // Insert latest users
     if (bulkUsersLists.length > 0) {
-      await collection.value.bulkWrite(bulkUsersLists);
+      await collection.bulkWrite(bulkUsersLists);
     }
-
-    bulkUsersLists = [];
   } catch(err: unknown) {
     return {
       ok: false,

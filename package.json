@@ -19,9 +19,7 @@
   },
   "type": "module",
   "dependencies": {
-    "chalk": "^5.4.1",
     "mongodb": "^6.1.0",
-    "node": "^22.2.0",
     "vdck": "^2.0.5"
   },
   "devDependencies": {
