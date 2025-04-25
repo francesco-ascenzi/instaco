@@ -1,4 +1,4 @@
-# Instaco v2
+# Instaco
 A tool to compare Instagram followers/followings and track them over time with Node and MongoDB
 
 ### Summary
