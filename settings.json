@@ -1,12 +1,11 @@
 {
   "connection": {
-    "uri": "mongodb://127.0.0.1:27018/",
+    "uri": "mongodb://127.0.0.1:27017/",
     "db": "instagram",
-    "collection": "trackFollowers"
+    "collection": "testCollection"
   },
-  "files": {
-    "batchSize": 5000,
-    "inputFiles": "data",
-    "outputList": "data/list"
-  }
+  "maxFileBatchSize": 5000,
+  "inputFilesPath": "data",
+  "outputListPath": "data/list",
+  "skipSettings": false
 }

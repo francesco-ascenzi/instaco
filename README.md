@@ -5,7 +5,6 @@ A tool to compare Instagram followers/followings and track them over time with N
 - [Requirements](#requirements)
 - [Outputs](#outputs)
 - [Collection structure](#collection-structure)
-- [Funding](#funding)
 - [Author](#author)
 - [License](#license)
 
@@ -30,11 +29,8 @@ This application creates a database named "Instagram" with a collection called "
 - **updated:** date - The last time the process was initiated  
 - **timestamp:** date - Timestamps from the followers/followings lists  
 
-## Funding
-If you liked this tool, consider funding it at [@PayPal](https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A) (the link is within package.json too)
-
 ## Author
-Frash | Francesco Ascenzi ([@fra.ascenzi](https://www.instagram.com/fra.ascenzi) on IG)
+Frash | Francesco Ascenzi ([@frashenzi](https://www.instagram.com/frashenzi) on IG)
 
 # License
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.

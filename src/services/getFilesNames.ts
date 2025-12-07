@@ -4,15 +4,14 @@
  * @license Apache 2.0 
 ================================================================================================ */
 import fs from "fs/promises";
-import { stdResponse } from "../types/index.js";
+import { StdResponse } from "../types/index.js";
 
 /** Get the names of the followers/followings files in a given folder
  * 
  * @param filesPath - Path to the folder containing the files
- * @returns {stdResponse<string[]>} - Object containing the status of the operation and the files names
+ * @returns {StdResponse<string[]>} - Object containing the status of the operation and the files names
  */
-export default async function getFilesNames(filesPath: string): Promise<stdResponse<string[]>> {
-  // Retrieve files names within the main files folder
+export default async function getFilesNames(filesPath: string): Promise<StdResponse<string[]>> {
   let filesFound: string[] = [];
   try {
     filesFound = await fs.readdir(filesPath);
@@ -29,6 +28,13 @@ export default async function getFilesNames(filesPath: string): Promise<stdRespo
     if (filesFound[i].match(/\.json$/gmi)) {
       jsonFiles.push(filesFound[i]);
     }
+  }
+
+  if (jsonFiles.length !== 2) {
+    return {
+      ok: false,
+      msg: `It seems that the input folder doesn't contain exactly two .json files (found ${jsonFiles.length})`
+    };
   }
 
   return {

@@ -1,42 +1,31 @@
+import { Db } from "mongodb";
+
 // Interfaces
-export interface settings {
+export interface Settings {
   connection: {
     uri: string,
     db: string,
     collection: string
   },
-  files: {
-    batchSize: number,
-    inputFiles: string,
-    outputList: string
-  }
+  maxFileBatchSize: number,
+  inputFilesPath: string,
+  outputListPath: string,
+  skipSettings: boolean
 };
 
 // Types
-export type extStdResponse<T> = {
+export type StdResponse<T> = {
   ok: true,
-  msg: string,
   value: T
-} | {
-  ok: false,
-  msg: string;
-};
-
-export type minStdResponse = {
-  ok: true
 } | {
   ok: false,
   msg: string
 };
 
-export type objKeyString = {
-  [key: string]: any;
-};
-
-export type stdResponse<T> = {
+export type OpenConnectionResponse = {
   ok: true,
-  value: T
+  db: Db
 } | {
   ok: false,
-  msg: string;
+  msg: string
 };

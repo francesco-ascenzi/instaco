@@ -1,8 +1,7 @@
 {
   "name": "instaco",
-  "version": "2.5.0",
+  "version": "3.0.0",
   "author": "Francesco 'Frash' Ascenzi",
-  "funding": "https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A",
   "homepage": "https://github.com/francesco-ascenzi/instaco",
   "repository": {
     "type": "git",
@@ -14,13 +13,13 @@
   "main": "./dist/main.js",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc -p .",
-    "start": "node ./dist/index.js"
+    "start": "tsc -p . && node ./dist/index.js"
   },
   "type": "module",
   "dependencies": {
-    "mongodb": "^6.1.0",
-    "vdck": "^2.0.5"
+    "chalk": "^5.6.2",
+    "mongodb": "^7.0.0",
+    "vdck": "^2.1.4"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
