@@ -51,7 +51,7 @@ export async function intro(): Promise<void> {
     chalk.grey("@author: Francesco 'Frash' Ascenzi") + "\n\n" +
     "Find out more projects on" + "\n" +
     chalk.grey("https://www.github.com/francesco-ascenzi") + "\n\n" +
-    "__________________________" + "\n\n"
+    "__________________________" + "\n"
   );
 
   await new Promise(resolve => setTimeout(resolve, 500));

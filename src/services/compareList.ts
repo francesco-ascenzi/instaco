@@ -1,9 +1,10 @@
 import fs from "fs";
-import { AnyBulkWriteOperation, BSON, Collection, Db, WithId } from "mongodb";
+import { AnyBulkWriteOperation, BSON, Collection, Db } from "mongodb";
 import path from "path";
 
-import { Settings } from "../types/index.js";
 import { logError } from "../lib/prompt.js";
+
+import { Settings } from "../types/index.js";
 
 /** Update the main collection with the followers/followings data
  * 
@@ -28,7 +29,7 @@ async function updateCollection(collection: Collection, diffCollection: Collecti
 
     if (batch.length === 0) {
       if (bulkArray.length > 0) {
-        await collection.bulkWrite(bulkArray);
+        await collection.bulkWrite(bulkArray, { ordered: false });
       }
       break;
     }
@@ -60,7 +61,7 @@ async function updateCollection(collection: Collection, diffCollection: Collecti
     }
 
     if (bulkArray.length > 0) {
-      await collection.bulkWrite(bulkArray);
+      await collection.bulkWrite(bulkArray, { ordered: false});
       bulkArray = [];
     }
   }

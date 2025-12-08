@@ -9,20 +9,26 @@ import { logError } from "../lib/prompt.js";
  * @returns True if initialization is successful, false otherwise
  */
 export async function initCollections(mongo: Db): Promise<boolean> {
-  const followers = mongo.collection("followers");
-  const followings = mongo.collection("followings");
-
   try {
+    const collectionList = await mongo.listCollections().toArray();
+    const collectionsNames = collectionList.map(col => col.name);
+
+    if (!collectionsNames.includes("followers")) {
+      await mongo.createCollection("followers");
+    }
+    
+    if (!collectionsNames.includes("followings")) {
+      await mongo.createCollection("followings");
+    }
+
+    const followers = mongo.collection("followers");
+    const followings = mongo.collection("followings");
+
+    await followers.createIndex({ user: 1 }, { unique: true });
+    await followings.createIndex({ user: 1 }, { unique: true });
+
     await followers.deleteMany({});
     await followings.deleteMany({});
-
-    if (!followers.indexExists("user")) {
-      await followers.createIndex({ user: 1 }, { unique: true });
-    }
-
-    if (!followings.indexExists("user")) {
-      await followings.createIndex({ user: 1 }, { unique: true });
-    }
 
     return true;
   } catch (err: unknown) {

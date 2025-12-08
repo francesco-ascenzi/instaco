@@ -7,10 +7,8 @@ import { extractUsernameFromHref } from '../lib/utilities.js';
 
 const vdck = new Vdck(false);
 
-const stringToSearch: string = '"string_list_data": [';
-const endStringToSearch: string = ']';
-
-let bulkUsersLists: AnyBulkWriteOperation<BSON.Document>[] = [];
+const stringToSearch = '"string_list_data": [';
+const endStringToSearch = ']';
 
 /** Check if the data params corresponds to the std Instagram followers/followings keys/values object and push it to the bulkUsersLists
  * 
@@ -22,9 +20,9 @@ let bulkUsersLists: AnyBulkWriteOperation<BSON.Document>[] = [];
  * }
  * @returns True if the data is valid, Error otherwise
  */
-function checkJSON(data: string, fileName: string): void {
+async function checkJSON(data: string, fileName: string, usersList: AnyBulkWriteOperation<BSON.Document>[]): Promise<void> {
   try {
-    const jsonedData = JSON.parse(data);
+    const jsonedData = await JSON.parse(data);
 
     // If the std Instagram followers/followings keys/values object fits
     if (vdck.sameObjects(jsonedData, {
@@ -35,7 +33,7 @@ function checkJSON(data: string, fileName: string): void {
       const username = extractUsernameFromHref(jsonedData.href);
 
       // Push it into bulkUsersLists
-      bulkUsersLists.push({
+      usersList.push({
         updateOne: {
           filter: {
             user: username
@@ -67,6 +65,7 @@ function checkJSON(data: string, fileName: string): void {
  * @returns MongoDB collection object
  */
 export default async function processFile(mongo: Db, filePath: string, batchSize: number): Promise<boolean> {
+  let bulkUsersLists: AnyBulkWriteOperation<BSON.Document>[] = [];
   let collection = mongo.collection("followers");
   let firstChunk = true;
   let incompleteChunk = "";
@@ -94,7 +93,7 @@ export default async function processFile(mongo: Db, filePath: string, batchSize
           const jsonChunk = buffer.substring((startIndex + stringToSearch.length), endIndex);
 
           // Checks JSON and push users into bulkUsersLists
-          checkJSON(jsonChunk, filePath);
+          await checkJSON(jsonChunk, filePath, bulkUsersLists);
 
           // Checks bulkUsersLists length and every 'batchSize' push data into MongoDB
           if (bulkUsersLists.length == batchSize) {

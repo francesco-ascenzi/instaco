@@ -3,6 +3,7 @@ A tool to compare Instagram followers/followings and track them over time with N
 
 ### Summary
 - [Requirements](#requirements)
+- [Settings](#settings)
 - [Outputs](#outputs)
 - [Collection structure](#collection-structure)
 - [Author](#author)

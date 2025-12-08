@@ -4,7 +4,7 @@ import Vdck from "vdck";
 
 import { logError } from "../lib/prompt.js";
 
-import { StdResponse, Settings } from "../types/index.js";
+import { Settings } from "../types/index.js";
 
 const vdck = new Vdck(false);
 
@@ -12,7 +12,7 @@ const vdck = new Vdck(false);
  * 
  * @returns Response object containing the parsed settings or an error message
  */
-export async function parseSettings(settings: Settings): Promise<boolean> {
+export async function parseSettings(settings: Settings): Promise<void> {
   try {
     const fileContent = await fs.readFile("./settings.json", "utf8");
 
@@ -28,8 +28,8 @@ export async function parseSettings(settings: Settings): Promise<boolean> {
       outputListPath: "string",
       skipSettings: "boolean"
     })) {
-      logError("invalid settings file structure, using default settings");
-      return false;
+      logError("invalid settings file structure");
+      return;
     }
 
     Object.assign(settings, {
@@ -43,10 +43,7 @@ export async function parseSettings(settings: Settings): Promise<boolean> {
       outputListPath: path.normalize(parsedContent.outputListPath),
       skipSettings: parsedContent.skipSettings
     });
-
-    return true;
   } catch (err: unknown) {
     logError(`while parsing settings file... ${String(err)}`);
-    return false;
   }
 }

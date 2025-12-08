@@ -1,9 +1,13 @@
-/** ===============================================================================================
- * INSTACO | A tool to compare Instagram's followers/followings and track them over time with Node and MongoDB
+/** ======================================================
+ * 
+ * INSTACO
+ * 
+ * A tool to compare Instagram's followers/followings 
+ * and track them over time with Node and MongoDB
  * 
  * @author Frash | Francesco Ascenzi
  * @license Apache 2.0 
-================================================================================================ */
+======================================================= */
 import chalk from "chalk";
 import path from "path";
 
@@ -37,12 +41,16 @@ const settings: Settings = {
 
   while (true) {
     // Read and parse settings
-    if (!await parseSettings(settings)) break;
-    logInfo("Found these settings:" + "\n\n" + JSON.stringify(settings, null, 2) + "\n");
-    const isSettingsCorrect = await getUserInput(`Are these settings correct? (y/n)`, 1);
-    if (isSettingsCorrect.toLowerCase() !== "y") {
-      logError("Please fix the settings file and restart Instaco");
-      break;
+    await parseSettings(settings);
+    console.log("\n" + JSON.stringify(settings, null, 2)+ "\n");
+    if (settings.skipSettings) {
+      logInfo("Skipping settings confirmation as per configuration.");
+    } else {
+      const isSettingsCorrect = await getUserInput(`Do you want to continue with these settings? (y/n)`, 1);
+      if (isSettingsCorrect.toLowerCase() !== "y") {
+        logError("Please fix the settings file and restart Instaco");
+        break;
+      }
     }
 
     // Check directories
@@ -93,13 +101,13 @@ const settings: Settings = {
     // Generate .txt diff files
     const processDiff = await compareLists(mongo.db, settings);
     if (!processDiff) break;
-  
+
     console.log();
     console.timeEnd(chalk.green('Completed in')); // End timer
 
     const restartProcess: string = await getUserInput(`\nDo you want to restart? (y/n)`, 1);
     if (restartProcess.toLowerCase() !== "y") {
-      logInfo(`Exiting Instaco. Goodbye!`);
+      logInfo("\nExiting Instaco. Goodbye!");
       break;
     }
   }

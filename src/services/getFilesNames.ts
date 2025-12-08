@@ -1,9 +1,5 @@
-/** ===============================================================================================
- * @author Frash | Francesco Ascenzi
- * @fund https://www.paypal.com/donate/?hosted_button_id=QL4PRUX9K9Y6A
- * @license Apache 2.0 
-================================================================================================ */
 import fs from "fs/promises";
+
 import { StdResponse } from "../types/index.js";
 
 /** Get the names of the followers/followings files in a given folder
