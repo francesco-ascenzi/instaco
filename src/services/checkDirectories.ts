@@ -16,7 +16,7 @@ export async function checkDirectories(settings: Settings): Promise<boolean> {
     try {
       await fs.mkdir(settings.outputListPath, { recursive: true });
     } catch (error: unknown) {
-      logError(`unable to create output directory at path ${settings.outputListPath}`);
+      logError(`Unable to create output directory at path ${settings.outputListPath}`);
       return false;
     }
   }

@@ -28,7 +28,7 @@ export async function parseSettings(settings: Settings): Promise<void> {
       outputListPath: "string",
       skipSettings: "boolean"
     })) {
-      logError("invalid settings file structure");
+      logError("Invalid settings file structure");
       return;
     }
 
@@ -44,6 +44,6 @@ export async function parseSettings(settings: Settings): Promise<void> {
       skipSettings: parsedContent.skipSettings
     });
   } catch (err: unknown) {
-    logError(`while parsing settings file... ${String(err)}`);
+    logError(`While parsing settings file... ${String(err)}`);
   }
 }

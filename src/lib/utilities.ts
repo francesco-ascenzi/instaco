@@ -17,7 +17,7 @@ export async function createDir(dirPath: string): Promise<boolean> {
     try {
       await fs.mkdir(dirPath, { recursive: true });
     } catch (dirError: unknown) {
-      logError(chalk.red(`> Error: Unable to create directory at path ${dirPath}`));
+      logError(chalk.red(`Unable to create directory at path ${dirPath}`));
       return false;
     }
   }
@@ -46,7 +46,7 @@ export function getRoot(mainDirPath: string): string {
 export function checkDir(dirPath: string, mustExist: boolean): boolean {
   try {
     if (mustExist && !existsSync(dirPath)) {
-      logError(`directory at path '${dirPath}' doesn't exist`);
+      logError(`Directory at path '${dirPath}' doesn't exist`);
       return false;
     }
 
