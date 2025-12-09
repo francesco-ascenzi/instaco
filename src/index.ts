@@ -1,5 +1,4 @@
 /** ======================================================
- * 
  * INSTACO
  * 
  * A tool to compare Instagram's followers/followings 
