@@ -10,11 +10,51 @@ A tool to compare Instagram followers/followings and track them over time with N
 - [License](#license)
 
 ## Requirements
-To use this tool, you must have:
-- **Node.js** version 18.0.0 or higher.
+In order to use this tool, you must have:
+- **Node.js** version 18.0.0 or higher installed.
 - A running **MongoDB** instance (port configuration can be set in settings.json).
 - Your **Instagram followers and followings JSON files**, located in the directory specified in settings.json.
 - A **CLI** to execute node index.js and initiate the process.
+
+## Settings
+That's the settings file and its keys/values definitions
+```
+{
+  "connection": {
+    "uri": "mongodb://127.0.0.1:27017/",
+    "db": "instagram",
+    "collection": "trackFollowers"
+  },
+  "maxFileBatchSize": 5000,
+  "inputFilesPath": "data",
+  "outputListPath": "data/list",
+  "skipSettings": false
+}
+```
+<br>
+
+**Keys breakdown**
+
+```connection```
+Contains the configuration needed to connect to the MongoDB database.
+- uri: MongoDB connection string for a local or remote server.
+- db: Name of the database to use.
+- collection: The collection where the application reads or stores data (in this case, tracked followers).
+
+```maxFileBatchSize```
+Maximum number of records the application will process in a single batch.
+This helps prevent excessive memory usage when working with large files.
+
+```inputFilesPath```
+
+Path to the folder where input files are stored, such as raw follower export files.
+
+```outputListPath```
+
+Path to the folder where generated lists or processed output files will be saved.
+
+```skipSettings```
+If set to true, the application will skip asking for confirmation before running with the provided settings.
 
 ## Outputs
 Instaco generates:
