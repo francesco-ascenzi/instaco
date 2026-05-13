@@ -7,12 +7,25 @@
  * @author Frash | Francesco Ascenzi
  * @license Apache 2.0 
 ======================================================= */
-import start from "./services/main.js";
+import start from './services/main.js';
 
-import { logError } from "./utils/prompt.js";
+import { logError } from './utils/prompt.js';
 
-process.on('SIGINT', (e) => {
-  logError(e);
+process.on('uncaughtException', (err) => {
+  logError('Uncaught Exception');
+  logError(err);
+  process.exit(1);
 });
 
-(async () => await start())();
+process.on('unhandledRejection', (reason) => {
+  logError('Unhandled Rejection');
+  logError(reason);
+  process.exit(1);
+});
+
+process.on('SIGINT', (signal) => {
+  logError(`Received signal: ${signal}`);
+  process.exit(0);
+});
+
+start();

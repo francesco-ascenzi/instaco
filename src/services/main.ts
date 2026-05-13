@@ -1,54 +1,80 @@
-import { getUserInput, intro, logError, logInfo } from '../utils/prompt.js';
-import findFiles from "../services/findFiles.js";
+import chalk from 'chalk';
 
-import { loadConfig } from "../utils/validation.js";
-import { initDb } from "../db/init.js";
-import { importer } from "../services/importer.js";
+import { getDb } from '../db/connection.js';
+import { initDb } from '../db/init.js';
 
-let dbInit = false;
+import findFiles from './findFiles.js';
+import generatesFiles from './generateFiles.js';
+import { importer } from './importer.js';
+import { validateFiles } from './validateFiles.js';
 
-process.on('SIGINT', (e) => {
-  logError(e);
-});
+import { confirm, intro, logError, printConfig } from '../utils/prompt.js';
+import { loadConfig } from '../utils/validation.js';
 
+/** Main entry point of the Instaco application.
+ *
+ * This function runs the full interactive CLI workflow:
+ * 1. Displays an introduction screen
+ * 2. Loads configuration from `.env`
+ * 3. Prompts the user to confirm settings
+ * 4. Initializes the database if not already available
+ * 5. Scans the input directory for Instagram export files
+ * 6. Asks user confirmation before processing
+ * 7. Imports each file into the SQLite database via the importer
+ * 8. Generates the final "unfollow" diff output file
+ * 9. Optionally restarts the process in a loop
+ * 10. Exits the application cleanly when requested
+ *
+ * @returns Resolves when the application terminates
+ */
 export default async function start() {
+  // Intro
   await intro();
 
-  while (true) {
-    const config = loadConfig();
-    console.log("\n" + JSON.stringify(config, null, 2)+ "\n");
-    const isSettingsCorrect = await getUserInput(`Do you want to continue with these settings? (y/n)`, 1);
-    if (isSettingsCorrect.toLowerCase() !== "y") {
-      logError("Please fix the settings file and restart Instaco");
-      break;
-    }
+  // Configs
+  const config = loadConfig();
+  printConfig(config);
 
-    if (!dbInit) initDb();
-
-    // Search files
-    const files = await findFiles(config.INPUT_PATH);
-    const areFilesCorrect: string = await getUserInput(`Are these files correct? (y/n)`, 1);
-    if (areFilesCorrect.toLowerCase() !== "y") {
-      logInfo("Aborted by user");
-      break;
-    }
-
-    // Process each file
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      logInfo(String(file));
-      await importer(config, file.path, file.type);
-    }
-
-    // Generate diff file and clean db
-
-
-    const restartProcess: string = await getUserInput(`\nDo you want to restart? (y/n)`, 1);
-    if (restartProcess.toLowerCase() !== "y") {
-      logInfo("\nExiting Instaco. Goodbye!");
-      break;
-    }
+  if (!(await confirm('Are these settings correct? (y/n)'))) {
+    logError('fix the settings file and restart Instaco.');
+    process.exit(0);
   }
 
-  process.exit(0);
+  // Init db
+  if (!getDb()) initDb();
+
+  // Find files
+  const files = await findFiles(config.INPUT_PATH);
+  if (!validateFiles(files)) process.exit(0);
+
+  console.log('__________________________');
+  console.log('\nFiles found:', '\n');
+  for (const file of files) {
+    console.log(
+      chalk.gray('Type:'),
+      file.type === 'followers' ? chalk.greenBright('followers ') : chalk.blueBright('followings'),
+      chalk.gray('| Name:'),
+      file.name,
+    );
+  }
+
+  if (!(await confirm('\nAre these files correct? (y/n)'))) {
+    logError('change file paths. Aborted by user.');
+    process.exit(0);
+  }
+
+  // Start timer
+  console.log('__________________________', '\n');
+  console.time(chalk.greenBright('Completed in'));
+
+  // Import records
+  for (const file of files) {
+    await importer(file.path, file.type, config.MAX_BATCH_SIZE);
+  }
+
+  // Generate output file
+  await generatesFiles(config.OUTPUT_PATH);
+
+  // End
+  console.timeEnd(chalk.greenBright('Completed in'));
 }

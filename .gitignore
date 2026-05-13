@@ -1,8 +1,9 @@
-# Folders
-.vscode
-data
-dist
-node_modules
-
 # Files
+*.env
 sqlite.*
+
+# Folders
+/.vscode
+/data
+/dist
+/node_modules

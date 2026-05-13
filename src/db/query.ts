@@ -1,4 +1,4 @@
-import { getDb } from "./connection.js";
+import { getDb } from './connection.js';
 
 /** Executes a parameterized SQL statement
  *
@@ -10,5 +10,7 @@ import { getDb } from "./connection.js";
  * @returns The result of the execution
  */
 export function run(sql: string, params: any[] = []) {
-  return getDb().prepare(sql).run(...params);
+  return getDb()
+    .prepare(sql)
+    .run(...params);
 }

@@ -1,12 +1,12 @@
-import fs from "node:fs/promises";
-import path from "path";
+import fs from 'node:fs/promises';
+import path from 'path';
 
-import { parseFollowers } from "../parser/followers.js";
-import { parseFollowings } from "../parser/followings.js";
+import { parseFollowers } from '../parser/followers.js';
+import { parseFollowings } from '../parser/followings.js';
 
-import { logError, logInfo } from "../utils/prompt.js";
+import { logError } from '../utils/prompt.js';
 
-import { FileType } from "../types/index.js";
+import { type FileType } from '../types/index.js';
 
 /** Scans a directory for Instagram JSON files and detects their type.
  *
@@ -24,10 +24,10 @@ export default async function findFiles(filesPath: string): Promise<FileType[]> 
 
       try {
         for await (const _ of parseFollowers(filePath)) {
-          logInfo(`- Type: followers  | File: ${file}`);
           files.push({
-            type: "followers",
-            path: filePath
+            name: file,
+            path: filePath,
+            type: 'followers',
           });
 
           break;
@@ -38,10 +38,10 @@ export default async function findFiles(filesPath: string): Promise<FileType[]> 
 
       try {
         for await (const _ of parseFollowings(filePath)) {
-          logInfo(`- Type: followings | File: ${file}`);
           files.push({
-            type: "followings",
-            path: filePath
+            name: file,
+            path: filePath,
+            type: 'followings',
           });
 
           break;

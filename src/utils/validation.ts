@@ -1,13 +1,13 @@
-import { ConfigSchema, ConfigType } from "../config/env.js";
+import { ConfigSchema } from '../config/env.js';
+
+import type { ConfigType } from '../types/index.js';
 
 /** Loads and validates environment variables using Zod schema.
  *
- * @returns {ConfigType} A validated configuration object.
+ * @returns A validated configuration object.
  */
 export function loadConfig(): ConfigType {
   const result = ConfigSchema.safeParse(process.env);
 
-  return result.success
-    ? result.data
-    : ConfigSchema.parse({});
+  return result.success ? result.data : ConfigSchema.parse({});
 }

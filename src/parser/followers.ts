@@ -1,19 +1,19 @@
-import fs from "fs";
-import { chain } from "stream-chain";
-import { parser } from "stream-json";
-import streamArray from "stream-json/streamers/stream-array.js";
+import fs from 'node:fs';
+import { chain } from 'stream-chain';
+import { parser } from 'stream-json';
+import streamArray from 'stream-json/streamers/stream-array.js';
 
-import { ParsedData } from "../types/index.js";
+import { type ParsedData } from '../types/index.js';
 
 /** Followers parser
- * 
+ *
  * @param filePath - Followers file path
  */
 export async function* parseFollowers(filePath: string): AsyncGenerator<ParsedData, void, unknown> {
   const pipeline = chain([
-    fs.createReadStream(filePath, { encoding: "utf8" }),
+    fs.createReadStream(filePath, { encoding: 'utf8' }),
     parser(),
-    streamArray()
+    streamArray(),
   ]);
 
   for await (const { value } of pipeline) {
@@ -21,8 +21,8 @@ export async function* parseFollowers(filePath: string): AsyncGenerator<ParsedDa
     if (!item) continue;
 
     yield {
+      timestamp: item.timestamp ?? null,
       username: item.value ?? null,
-      timestamp: item.timestamp ?? null
     };
   }
 }

@@ -1,0 +1,17 @@
+# Files
+*.env
+*.js
+*.md
+.gitignore
+.prettierrc
+sqlite.*
+package.json
+package-lock.json
+tsconfig.json
+
+# Folders
+**/.git
+**/.hg
+**/.svn
+/node_modules
+/dist

@@ -1,11 +1,11 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from 'node:fs';
+import path from 'node:path';
 
-import { getDb } from "./connection.js";
+import { getDb } from './connection.js';
 
 /** Initializes database schema and PRAGMA settings
  *
- * @returns {void}
+ * @returns void
  */
 export function initDb(): void {
   const db = getDb();
@@ -15,9 +15,8 @@ export function initDb(): void {
     PRAGMA synchronous = NORMAL;
   `);
 
-  const schemasFilePath = path.resolve("db/schemas/tables.sql");
-  const schemas = fs.readFileSync(schemasFilePath, "utf8");
+  const schemasFilePath = path.resolve('db/schemas/tables.sql');
+  const schemas = fs.readFileSync(schemasFilePath, 'utf8');
 
   db.exec(schemas);
 }
-

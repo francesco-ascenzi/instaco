@@ -1,80 +1,110 @@
 # Instaco
-A tool to compare Instagram followers/followings and track them over time with Node and MongoDB
 
-### Summary
+Instaco reads exported Instagram files, imports the data into a local SQLite database, and produces a text file containing accounts that no longer follow you.
+
+#### Summary
+
 - [Requirements](#requirements)
-- [Settings](#settings)
-- [Outputs](#outputs)
-- [Collection structure](#collection-structure)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Workflow](#workflow)
+- [Database structure](#database-structure)
+- [Notes](#notes)
 - [Author](#author)
 - [License](#license)
 
-## Requirements
-In order to use this tool, you must have:
-- **Node.js** version 18.0.0 or higher installed.
-- A running **MongoDB** instance (port configuration can be set in settings.json).
-- Your **Instagram followers and followings JSON files**, located in the directory specified in settings.json.
-- A **CLI** to execute node index.js and initiate the process.
+___
 
-## Settings
-That's the settings file and its keys/values definitions
+### Requirements
+- ```npm```
+- ```node.js v22.14.0``` or higher
+- Instagram exported files in JSON format (followers and following)
+- A ```shell``` or ```terminal``` to run the script
+
+___
+
+### Installation
+
+Inside the root of the project, run:
+
 ```
-{
-  "connection": {
-    "uri": "mongodb://127.0.0.1:27017/",
-    "db": "instagram",
-    "collection": "trackFollowers"
-  },
-  "maxFileBatchSize": 5000,
-  "inputFilesPath": "data",
-  "outputListPath": "data/list",
-  "skipSettings": false
-}
+npm i
+``` 
+
+Compile TypeScript and start the application with:
+
 ```
-<br>
+npm run build:start
+```
 
-**Keys breakdown**
+or, if you have already built the project with npm run build:
 
-```connection```
-Contains the configuration needed to connect to the MongoDB database.
-- uri: MongoDB connection string for a local or remote server.
-- db: Name of the database to use.
-- collection: The collection where the application reads or stores data (in this case, tracked followers).
+```
+npm start
+```
 
-```maxFileBatchSize```
-Maximum number of records the application will process in a single batch.
-This helps prevent excessive memory usage when working with large files.
+___
 
-```inputFilesPath```
+### Configuration
 
-Path to the folder where input files are stored, such as raw follower export files.
+The main configuration is located in the .env file.
 
-```outputListPath```
+```
+# path to the SQLite database file
+DB_FILE_PATH=./db/sqlite.db
 
-Path to the folder where generated lists or processed output files will be saved.
+# folder containing input JSON files
+INPUT_PATH=data
 
-```skipSettings```
-If set to true, the application will skip asking for confirmation before running with the provided settings.
+# maximum number of records imported in a single batch
+MAX_BATCH_SIZE=500
 
-## Outputs
-Instaco generates:
-- Data about your followers and users who no longer follow you, stored over time in MongoDB.
-- A ```list_[yyyymmdd].txt``` file in your specified settings directory, containing users who are not currently following you.
+# folder where output files will be saved
+OUTPUT_PATH=data/list
+```
 
-## Collection structure
-This application creates a database named "Instagram" with a collection called "followers". The structure of the "followers" collection includes:  
-- **user:** string - The user's name  
-- **followIt:** boolean - True if you follow the user  
-- **followsMe:** boolean - True if the user follows you, false if they have unfollowed you  
-- **followsMeBefore:** boolean - True if the user has already followed you in the past  
-- **updated:** date - The last time the process was initiated  
-- **timestamp:** date - Timestamps from the followers/followings lists  
+___
 
-## Author
-Frash | Francesco Ascenzi ([@frashenzi](https://www.instagram.com/frashenzi) on IG)
+### Workflow
 
-# License
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
-You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+- Instaco reads configuration from .env
+- It finds JSON files in INPUT_PATH
+- It automatically identifies whether each file is followers or following
+- It imports the data into two SQLite tables (followers and followings)
+- It generates an ```unfollow_me_YYYYMMDD.txt``` file in ```OUTPUT_PATH``` that contains a list of usernames, one per line, corresponding to accounts you follow that no longer follow you back.
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+___
+
+#### Database structure
+
+The SQLite database uses two tables: ```followers``` and ```followings```.
+
+Each table contains:
+
+```
+username   TEXT PRIMARY KEY,    -- IG username
+ig_from    INTEGER NOT NULL,    -- original Instagram timestamp
+
+created_at INTEGER NOT NULL,    -- local creation timestamp
+updated_at INTEGER NOT NULL     -- local update timestamp
+```
+
+___
+
+### Notes
+
+The process supports batch imports to handle large files.
+
+___
+
+### Author
+
+Francesco 'Frash' Ascenzi
+
+___
+
+### License
+
+Apache License 2.0.
+
+See the ```LICENSE``` file in the project root for more details.
