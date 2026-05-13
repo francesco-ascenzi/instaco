@@ -18,7 +18,7 @@
     "vitest": "^4.1.6"
   },
   "engines": {
-    "node": ">=22.14.0"
+    "node": ">=24.10.0"
   },
   "name": "instaco",
   "homepage": "https://github.com/francesco-ascenzi/instaco",
