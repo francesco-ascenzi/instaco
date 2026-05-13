@@ -9,21 +9,25 @@ export const ConfigSchema = z.object({
 });
 
 export const FollowersFileStruct = z.object({
-  string_list_data: z.array(
-    z.object({
-      value: z.string().min(1),
-      timestamp: z.int()
-    })
-  ).min(1)
+  string_list_data: z
+    .array(
+      z.object({
+        value: z.string().min(1),
+        timestamp: z.int(),
+      }),
+    )
+    .min(1),
 });
 
 export const FollowingsFileStruct = z.object({
   title: z.string().min(1),
-  string_list_data: z.array(
-    z.object({
-      timestamp: z.int()
-    })
-  ).min(1)
+  string_list_data: z
+    .array(
+      z.object({
+        timestamp: z.int(),
+      }),
+    )
+    .min(1),
 });
 
 // Interfaces

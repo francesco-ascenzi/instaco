@@ -87,7 +87,7 @@ describe('parser/followings.js modules', () => {
       {
         username: 'only_username',
         timestamp: 1690000000,
-      }
+      },
     ]);
   });
 
