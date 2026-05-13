@@ -1,11 +1,12 @@
 import chalk from 'chalk';
 
-import { getDb } from '../db/connection.js';
 import { initDb } from '../db/init.js';
 
+import { cleanFollowers } from './cleanFollowers.js';
 import findFiles from './findFiles.js';
 import generatesFiles from './generateFiles.js';
 import { importer } from './importer.js';
+import { swapTables } from './swapTables.js';
 import { validateFiles } from './validateFiles.js';
 
 import { confirm, intro, logError, printConfig } from '../utils/prompt.js';
@@ -41,7 +42,7 @@ export default async function start() {
   }
 
   // Init db
-  if (!getDb()) initDb();
+  initDb();
 
   // Find files
   const files = await findFiles(config.INPUT_PATH);
@@ -71,6 +72,12 @@ export default async function start() {
   for (const file of files) {
     await importer(file.path, file.type, config.MAX_BATCH_SIZE);
   }
+
+  // Generate leaving followers output file and clean
+  await cleanFollowers(config.OUTPUT_PATH);
+
+  // Replace followers table with new followers records
+  swapTables();
 
   // Generate output file
   await generatesFiles(config.OUTPUT_PATH);

@@ -46,7 +46,7 @@ export async function importer(
  * @returns void
  */
 function flush(batch: any[], type: string, now: number): void {
-  const table = type;
+  const table = type === 'followers' ? 'temp_followers' : 'followings';
 
   transaction(() => {
     for (const user of batch) {
