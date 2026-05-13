@@ -15,7 +15,9 @@ import { getStringDate } from '../utils/date.js';
  */
 export default async function generatesFiles(outputDirPath: string): Promise<void> {
   const query = `
-    SELECT f.username
+    SELECT 
+      f.username,
+      f.ig_from
     FROM followings f
     LEFT JOIN followers fr
       ON fr.username = f.username
