@@ -42,10 +42,12 @@ describe('database connection and schema', () => {
     initDb();
 
     const tables = getDb()
-      .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('followers', 'followings') ORDER BY name")
+      .prepare(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('followers', 'followings') ORDER BY name",
+      )
       .all() as TableRow[];
 
-    expect(tables.map((row: { name: string }) => row.name)).toEqual(['followers', 'followings']); 
+    expect(tables.map((row: { name: string }) => row.name)).toEqual(['followers', 'followings']);
   });
 
   test('applies SQLite pragmas on initialization', async () => {
@@ -70,7 +72,9 @@ describe('database connection and schema', () => {
       );
     });
 
-    const row = getDb().prepare('SELECT username, ig_from FROM followers WHERE username = ?').get('test_user');
+    const row = getDb()
+      .prepare('SELECT username, ig_from FROM followers WHERE username = ?')
+      .get('test_user');
 
     expect(insertResult.changes).toBe(1);
     expect(row).toEqual({ username: 'test_user', ig_from: 123 });

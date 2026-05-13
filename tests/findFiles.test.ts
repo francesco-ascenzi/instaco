@@ -6,9 +6,7 @@ import path from 'node:path';
 const fixtures = {
   followers: [
     {
-      string_list_data: [
-        { value: 'follower_one', timestamp: 1690000000 },
-      ],
+      string_list_data: [{ value: 'follower_one', timestamp: 1690000000 }],
     },
   ],
   followings: {
@@ -38,8 +36,14 @@ describe('findFiles service', () => {
 
     expect(files).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ type: 'followers', path: expect.stringContaining('followers.json') }),
-        expect.objectContaining({ type: 'followings', path: expect.stringContaining('followings.json') }),
+        expect.objectContaining({
+          type: 'followers',
+          path: expect.stringContaining('followers.json'),
+        }),
+        expect.objectContaining({
+          type: 'followings',
+          path: expect.stringContaining('followings.json'),
+        }),
       ]),
     );
   });

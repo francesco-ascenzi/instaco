@@ -5,9 +5,7 @@ import path from 'node:path';
 
 const followerFixture = [
   {
-    string_list_data: [
-      { value: 'common_user', timestamp: 1690000000 },
-    ],
+    string_list_data: [{ value: 'common_user', timestamp: 1690000000 }],
   },
 ];
 
@@ -73,8 +71,12 @@ describe('importer and output generation', () => {
     const generated = await fs.readFile(path.join(outputDir, outputFiles[0]), 'utf8');
     expect(generated.trim()).toBe('lost_user\ncommon_user');
 
-    const rowsFollowers = getDb().prepare('SELECT username FROM followers ORDER BY username').all() as { username: string }[];
-    const rowsFollowings = getDb().prepare('SELECT username FROM followings ORDER BY username').all() as { username: string }[];
+    const rowsFollowers = getDb()
+      .prepare('SELECT username FROM followers ORDER BY username')
+      .all() as { username: string }[];
+    const rowsFollowings = getDb()
+      .prepare('SELECT username FROM followings ORDER BY username')
+      .all() as { username: string }[];
 
     expect(rowsFollowers.map((row) => row.username)).toEqual([]);
     expect(rowsFollowings.map((row) => row.username)).toEqual(['common_user', 'lost_user']);
