@@ -1,0 +1,18 @@
+[
+  {
+    "string_list_data": [
+      {
+        "value": "follower_one",
+        "timestamp": 1690000000
+      }
+    ]
+  },
+  {
+    "string_list_data": [
+      {
+        "value": "follower_two",
+        "timestamp": 1690001000
+      }
+    ]
+  }
+]

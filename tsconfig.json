@@ -32,5 +32,6 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": false,
-  }
+  },
+  "include": ["src"]
 }

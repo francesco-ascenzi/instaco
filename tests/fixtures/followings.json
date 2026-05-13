@@ -1,0 +1,22 @@
+{
+  "relationships_following": [
+    {
+      "title": "following_one",
+      "string_list_data": [
+        {
+          "value": "following_one",
+          "timestamp": 1690002000
+        }
+      ]
+    },
+    {
+      "title": "following_two",
+      "string_list_data": [
+        {
+          "value": "following_two",
+          "timestamp": 1690003000
+        }
+      ]
+    }
+  ]
+}
