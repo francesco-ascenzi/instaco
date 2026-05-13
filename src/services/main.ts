@@ -37,7 +37,7 @@ export default async function start() {
 
   if (!(await confirm('Are these settings correct? (y/n)'))) {
     logError('fix the settings file and restart Instaco.');
-    process.exit(0);
+    process.exit(1);
   }
 
   // Init db
@@ -45,7 +45,7 @@ export default async function start() {
 
   // Find files
   const files = await findFiles(config.INPUT_PATH);
-  if (!validateFiles(files)) process.exit(0);
+  if (!validateFiles(files)) process.exit(1);
 
   console.log('__________________________');
   console.log('\nFiles found:', '\n');
@@ -60,7 +60,7 @@ export default async function start() {
 
   if (!(await confirm('\nAre these files correct? (y/n)'))) {
     logError('change file paths. Aborted by user.');
-    process.exit(0);
+    process.exit(1);
   }
 
   // Start timer
