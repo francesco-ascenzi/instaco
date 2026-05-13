@@ -10,19 +10,20 @@
   "bugs": {
     "url": "https://github.com/francesco-ascenzi/instaco/issues"
   },
-  "main": "./dist/main.js",
   "license": "Apache-2.0",
   "scripts": {
-    "start": "tsc -p . && node ./dist/index.js"
+    "start": "tsc -p . && node --env-file=./.env ./dist/index.js"
   },
   "type": "module",
   "dependencies": {
+    "better-sqlite3": "^12.10.0",
     "chalk": "^5.6.2",
-    "mongodb": "^7.0.0",
-    "vdck": "^2.1.4"
+    "stream-json": "^2.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.7.0",
     "typescript": "^5.4.5"
   }
 }
