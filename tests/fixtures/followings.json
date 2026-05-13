@@ -4,7 +4,7 @@
       "title": "following_one",
       "string_list_data": [
         {
-          "value": "following_one",
+          "href": "https://www.instagram.com/_u/following_one",
           "timestamp": 1690002000
         }
       ]
@@ -13,7 +13,7 @@
       "title": "following_two",
       "string_list_data": [
         {
-          "value": "following_two",
+          "href": "https://www.instagram.com/_u/following_two",
           "timestamp": 1690003000
         }
       ]

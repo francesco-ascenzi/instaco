@@ -1,6 +1,4 @@
-import { ConfigSchema } from '../config/env.js';
-
-import type { ConfigType } from '../types/index.js';
+import { ConfigSchema, type ConfigType } from '../types/index.js';
 
 /** Loads and validates environment variables using Zod schema.
  *

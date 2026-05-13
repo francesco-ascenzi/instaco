@@ -3,7 +3,7 @@ import { chain } from 'stream-chain';
 import { parser } from 'stream-json';
 import streamArray from 'stream-json/streamers/stream-array.js';
 
-import { type ParsedData } from '../types/index.js';
+import { FollowersFileStruct, type ParsedData } from '../types/index.js';
 
 /** Followers parser
  *
@@ -17,12 +17,15 @@ export async function* parseFollowers(filePath: string): AsyncGenerator<ParsedDa
   ]);
 
   for await (const { value } of pipeline) {
-    const item = value?.string_list_data?.[0];
+    const parsed = FollowersFileStruct.safeParse(value);
+    if (!parsed.success) continue;
+
+    const item = parsed.data.string_list_data[0];
     if (!item) continue;
 
     yield {
-      timestamp: item.timestamp ?? null,
-      username: item.value ?? null,
+      timestamp: item.timestamp,
+      username: item.value,
     };
   }
 }

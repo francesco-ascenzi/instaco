@@ -4,10 +4,10 @@ async function loadDbModules() {
   process.env.DB_FILE_PATH = ':memory:';
   vi.resetModules();
 
-  const connection = await import('../src/db/connection.js');
-  const query = await import('../src/db/query.js');
-  const transactions = await import('../src/db/transactions.js');
-  const initDbModule = await import('../src/db/init.js');
+  const connection = await import('../../src/db/connection.js');
+  const query = await import('../../src/db/query.js');
+  const transactions = await import('../../src/db/transactions.js');
+  const initDbModule = await import('../../src/db/init.js');
 
   return {
     getDb: connection.getDb,

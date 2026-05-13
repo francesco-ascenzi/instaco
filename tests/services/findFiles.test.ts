@@ -31,7 +31,7 @@ describe('findFiles service', () => {
     await fs.writeFile(path.join(tempDir, 'followers.json'), JSON.stringify(fixtures.followers));
     await fs.writeFile(path.join(tempDir, 'followings.json'), JSON.stringify(fixtures.followings));
 
-    const { default: findFiles } = await import('../src/services/findFiles.js');
+    const { default: findFiles } = await import('../../src/services/findFiles.js');
     const files = await findFiles(tempDir);
 
     expect(files).toEqual(

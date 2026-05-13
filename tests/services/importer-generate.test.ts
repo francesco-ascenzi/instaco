@@ -46,10 +46,10 @@ describe('importer and output generation', () => {
     await fs.writeFile(followerFile, JSON.stringify(followerFixture));
     await fs.writeFile(followingFile, JSON.stringify(followingFixture));
 
-    const { initDb } = await import('../src/db/init.js');
-    const { getDb } = await import('../src/db/connection.js');
-    const { importer } = await import('../src/services/importer.js');
-    const { default: generateFiles } = await import('../src/services/generateFiles.js');
+    const { initDb } = await import('../../src/db/init.js');
+    const { getDb } = await import('../../src/db/connection.js');
+    const { importer } = await import('../../src/services/importer.js');
+    const { default: generateFiles } = await import('../../src/services/generateFiles.js');
 
     initDb();
 
