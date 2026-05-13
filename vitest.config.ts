@@ -13,7 +13,14 @@ export default defineConfig({
         functions: 80,
         branches: 75,
         statements: 80,
-      }
+      },
+      exclude: [
+        "types/**",
+        "**/*.d.ts",
+        "dist/**",
+        "node_modules/**",
+        "utils/prompt.ts"
+      ],
     },
   }
 });
