@@ -7,13 +7,13 @@ function resetEnv() {
   process.env.OUTPUT_PATH = 'data/list';
 }
 
-describe('validation/loadConfig', () => {
+describe('utils/validation', () => {
   beforeEach(() => {
     vi.resetModules();
     resetEnv();
   });
 
-  test('loads configuration values from environment variables', async () => {
+  test('loadConfig load values from environment variables', async () => {
     const { loadConfig } = await import('../src/utils/validation.js');
     const config = loadConfig();
 
@@ -25,7 +25,7 @@ describe('validation/loadConfig', () => {
     });
   });
 
-  test('falls back to defaults when env values are invalid', async () => {
+  test('loadConfig falls back to defaults when env values are invalid', async () => {
     process.env.MAX_BATCH_SIZE = '0';
     const { loadConfig } = await import('../src/utils/validation.js');
     const config = loadConfig();

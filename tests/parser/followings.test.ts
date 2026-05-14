@@ -19,8 +19,8 @@ describe('parser/followings.js modules', () => {
     const parsed = await collector(parseFollowings(fixturePath));
 
     expect(parsed).toEqual([
-      { username: 'following_one', timestamp: 1690002000 },
-      { username: 'following_two', timestamp: 1690003000 },
+      { username: 'username_1', timestamp: 1690002000 },
+      { username: 'username_5', timestamp: 1690003000 },
     ]);
   });
 

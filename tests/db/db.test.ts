@@ -23,7 +23,7 @@ type TableRow = {
 
 type Result = { value: number };
 
-describe('database connection and schema', () => {
+describe('db/* module', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env.DB_FILE_PATH = ':memory:';

@@ -31,6 +31,7 @@
     "build": "tsc -p .",
     "build:start": "tsc -p . && node --env-file=./.env ./dist/index.js",
     "coverage": "vitest run --coverage",
+    "format:check": "prettier . --check",
     "format": "prettier . --write",
     "start": "node --env-file=./.env ./dist/index.js",
     "test": "vitest run"
