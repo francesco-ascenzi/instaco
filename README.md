@@ -1,6 +1,6 @@
 # Instaco
 
-Instaco reads exported Instagram files, imports the data into a local SQLite database, and produces a text file containing accounts that no longer follow you.
+Instaco reads exported Instagram files, imports the data into a local SQLite database, and generates a text file containing accounts that no longer follow you, including users who followed you first and then unfollowed you.
 
 ## Summary
 
