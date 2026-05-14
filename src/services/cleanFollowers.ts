@@ -5,6 +5,7 @@ import { getDb } from '../db/connection.js';
 
 import { getStringDate } from '../utils/date.js';
 
+// TODO: JSDoc
 export async function cleanFollowers(outputDirPath: string) {
   const query = `
     SELECT 

@@ -3,7 +3,7 @@ import { chain } from 'stream-chain';
 import { parser } from 'stream-json';
 import streamObject from 'stream-json/streamers/stream-object.js';
 
-import { type ParsedData } from '../types/index.js';
+import { FollowingsFileStruct, type ParsedData } from '../types/index.js';
 
 /** Followings parser
  *
@@ -22,7 +22,10 @@ export async function* parseFollowings(
     if (key !== 'relationships_following') continue;
 
     for (const entry of value) {
-      const data = entry?.string_list_data?.[0];
+      const parsed = FollowingsFileStruct.safeParse(entry);
+      if (!parsed.success) continue;
+
+      const data = entry.string_list_data[0];
       if (!data) continue;
 
       yield {

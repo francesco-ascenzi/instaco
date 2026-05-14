@@ -12,11 +12,13 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.7.0",
+    "@vitest/coverage-v8": "^4.1.6",
     "prettier": "^3.8.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.6"
   },
   "engines": {
-    "node": ">=22.14.0"
+    "node": ">=24.10.0"
   },
   "name": "instaco",
   "homepage": "https://github.com/francesco-ascenzi/instaco",
@@ -24,12 +26,15 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/francesco-ascenzi/instaco.git"
-  },  
+  },
   "scripts": {
     "build": "tsc -p .",
-    "start": "node --env-file=./.env ./dist/index.js",
     "build:start": "tsc -p . && node --env-file=./.env ./dist/index.js",
-    "format": "prettier . --write"
+    "coverage": "vitest run --coverage",
+    "format:check": "prettier . --check",
+    "format": "prettier . --write",
+    "start": "node --env-file=./.env ./dist/index.js",
+    "test": "vitest run"
   },
   "type": "module",
   "version": "1.0.0"
