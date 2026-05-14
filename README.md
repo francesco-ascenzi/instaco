@@ -14,7 +14,7 @@ ___
 
 ### Author and license
 
-Author: Francesco 'Frash' Ascenzi
+Author: Francesco 'Frash' Ascenzi 
 License: Apache License 2.0
 
 See the ```LICENSE``` file in the project root for more details.
