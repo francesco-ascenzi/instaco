@@ -5,8 +5,14 @@ import { getDb } from '../db/connection.js';
 
 import { getStringDate } from '../utils/date.js';
 
-// TODO: JSDoc
-export async function cleanFollowers(outputDirPath: string) {
+/** Exports followers that are no longer present in the temporary followers table
+ * into a timestamped text file.
+ *
+ * @param outputDirPath - Absolute or relative path of the directory
+ * where the output file will be created.
+ * @returns Resolves when the file has been completely written.
+ */
+export async function cleanFollowers(outputDirPath: string): Promise<void> {
   const query = `
     SELECT 
       f.username,
