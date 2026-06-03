@@ -1,0 +1,41 @@
+{
+  "author": "Francesco Ascenzi",
+  "bugs": {
+    "url": "https://github.com/francesco-ascenzi/instaco/issues"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.10.0",
+    "chalk": "^5.6.2",
+    "stream-json": "^2.1.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.7.0",
+    "@vitest/coverage-v8": "^4.1.6",
+    "prettier": "^3.8.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.6"
+  },
+  "engines": {
+    "node": ">=24.10.0"
+  },
+  "name": "instaco",
+  "homepage": "https://github.com/francesco-ascenzi/instaco",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/francesco-ascenzi/instaco.git"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "build:start": "tsc -p . && node ./dist/index.js",
+    "coverage": "vitest run --coverage",
+    "format:check": "prettier . --check",
+    "format": "prettier . --write",
+    "start": "node ./dist/index.js",
+    "test": "vitest run"
+  },
+  "type": "module",
+  "version": "1.3.0"
+}

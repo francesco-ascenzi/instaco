@@ -1,0 +1,11 @@
+# Files
+*.env
+settings.json
+sqlite.*
+
+# Folders
+/.vscode
+/data
+/dist
+/node_modules
+/coverage

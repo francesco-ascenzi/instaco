@@ -1,0 +1,11 @@
+{
+  "db": {
+    "path": "./db/sqlite.db"
+  },
+  "general": {
+    "inputPath": "./data",
+    "maxBatchSize": 500,
+    "outputPath": "./data/lists",
+    "debug": false
+  }
+}

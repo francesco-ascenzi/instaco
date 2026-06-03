@@ -1,0 +1,20 @@
+# Files
+*.env
+*.js
+*.md
+.gitignore
+.prettierrc
+sqlite.*
+invalid.json
+package.json
+package-lock.json
+settings.json
+settings.example.json
+tsconfig.json
+
+# Folders
+**/.git
+**/.hg
+**/.svn
+/node_modules
+/dist
