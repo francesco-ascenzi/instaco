@@ -54,7 +54,7 @@ export async function intro(): Promise<void> {
     '\n\n\n' +
       'Instaco is a tool for tracking your Instagram followers/followings' +
       '\n' +
-      chalk.grey("@author: Francesco Ascenzi") +
+      chalk.grey('@author: Francesco Ascenzi') +
       '\n\n' +
       'Find more projects on' +
       '\n' +
