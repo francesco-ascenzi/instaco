@@ -4,17 +4,18 @@ Instaco reads exported Instagram files, imports the data into a local SQLite dat
 
 ## Summary
 
-- [Requirements](https://github.com/francesco-ascenzi/instaco/wiki/Requirements)
-- [Installation](https://github.com/francesco-ascenzi/instaco/wiki/Installation)
+- [Home](https://github.com/francesco-ascenzi/instaco/wiki)
 - [Configuration](https://github.com/francesco-ascenzi/instaco/wiki/Configuration)
+- [Requirements and setup](https://github.com/francesco-ascenzi/instaco/wiki/Requirements-and-setup)
 - [Workflow](https://github.com/francesco-ascenzi/instaco/wiki/Workflow)
 - [Database structure](https://github.com/francesco-ascenzi/instaco/wiki/Database-structure)
+- [FAQ](https://github.com/francesco-ascenzi/instaco/wiki/FAQ)
 
 ___
 
 ### Author and license
-
-Author: Francesco Ascenzi 
-License: Apache License 2.0
-
+  
+Author: Francesco Ascenzi  
+License: Apache License 2.0  
+  
 See the ```LICENSE``` file in the project root for more details.
